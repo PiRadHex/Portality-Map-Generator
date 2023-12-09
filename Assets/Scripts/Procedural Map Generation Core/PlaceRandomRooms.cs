@@ -217,7 +217,7 @@ public class PlaceRandomRooms : MonoBehaviour
             loop.prefabInstances.Add(prefabInstance);
 
             // place random items in the room
-            itemPlacers[0].PlacePrefabsAtPosotions(new List<Transform>(prefabInstance.transform.GetChild(1).transform.GetChild(1).GetComponentsInChildren<Transform>()));
+            //itemPlacers[0].PlacePrefabsAtPosotions(new List<Transform>(prefabInstance.transform.GetChild(1).transform.GetChild(1).GetComponentsInChildren<Transform>()));
         }
     }
 
@@ -246,7 +246,7 @@ public class PlaceRandomRooms : MonoBehaviour
 
     void DestroyItems()
     {
-        itemPlacers[0].DestroyInstances();
+        //itemPlacers[0].DestroyInstances();
     }
 
 
