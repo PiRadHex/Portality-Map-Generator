@@ -1013,7 +1013,7 @@ PrefabInstance:
     - target: {fileID: 3743597651704331078, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: linkedPortal
       value: 
-      objectReference: {fileID: 79700478}
+      objectReference: {fileID: 1998151633}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
 --- !u!4 &79700477 stripped
@@ -22160,7 +22160,7 @@ MonoBehaviour:
     minRooms: 5
     maxRooms: 10
     gapDistance: 20
-    pairRatio: 1
+    pairRatio: 2
     prefabInstances: []
     pair1: []
     pair2: []
@@ -26889,6 +26889,17 @@ Transform:
   m_Father: {fileID: 880484376}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1998151633 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3743597651704331078, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
+  m_PrefabInstance: {fileID: 752147977}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b9885b89b6d4fbe92f77801ecc3671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2002663037
 PrefabInstance:
   m_ObjectHideFlags: 0
