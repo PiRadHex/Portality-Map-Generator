@@ -4,6 +4,118 @@ using UnityEngine;
 using UnityEditor;
 
 
+public class RoomsManager : MonoBehaviour
+{
+
+    public List<Loop> loops = new List<Loop>();
+
+    private DistributePortals portalPlacer;
+    private List<PlaceRandomPrefabs> itemPlacers = new List<PlaceRandomPrefabs>();
+
+
+    private void Awake()
+    {
+        itemPlacers = new List<PlaceRandomPrefabs>(FindObjectsOfType<PlaceRandomPrefabs>());
+        portalPlacer = FindObjectOfType<DistributePortals>();
+    }
+
+
+    private void Start()
+    {
+        DestroyInstances(loops);
+        DestroyItems();
+
+        portalPlacer.SetAllUnused();
+
+        foreach (Loop loop in loops)
+        {
+            loop.setNumsOfRoomsAndPairs();
+            loop.AddEternalRooms();
+            PlaceRoomsIn(loop);
+            loop.MakePairs();
+            if (loop.pair1.Count == 0 | loop.pair2.Count == 0) continue;     
+            portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
+   
+        }
+
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+
+        }
+    }
+
+    
+
+    void PlaceRoomsIn(Loop loop)
+    {
+        for (int i = 0; i < loop.numOfRooms; i++)
+        {
+            GameObject prefab = loop.prefabsList[Random.Range(0, loop.prefabsList.Count)];
+
+            GameObject prefabInstance = Instantiate(prefab, transform);
+            prefabInstance.transform.position = loop.startPosition.position + Vector3.left * i * loop.gapDistance;
+
+            //prefabInstance.name = prefab.name + " - " + prefabInstance.GetInstanceID();
+
+            loop.prefabInstances.Add(prefabInstance);
+
+            // place random items in the room
+            //itemPlacers[0].PlacePrefabsAtPosotions(new List<Transform>(prefabInstance.transform.GetChild(1).transform.GetChild(1).GetComponentsInChildren<Transform>()));
+        }
+    }
+
+
+
+    void DestroyInstances(List<Loop> loops)
+    {
+        foreach (Loop loop in loops)
+        {
+            //prefabInstances.Remove(startRoom);
+            //prefabInstances.Remove(endRoom);
+            //SetPortalCandidatesNotUsed(new List<Transform>(startRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
+            //SetPortalCandidatesNotUsed(new List<Transform>(endRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
+            for (int i = 0; i < loop.prefabInstances.Count; i++)
+            {
+                Destroy(loop.prefabInstances[i]);
+            }
+            loop.prefabInstances.Clear();
+            //Debug.Log("DestroyInstances() is done.");
+            //Debug.Log(prefabInstances.Count);
+        }
+
+    }
+
+
+
+    void DestroyItems()
+    {
+        //itemPlacers[0].DestroyInstances();
+    }
+
+
+
+
+    void SetPortalCandidatesNotUsed(List<Transform> positionCandidates)
+    {
+        positionCandidates.Remove(positionCandidates[0]);
+        for (int i = 0; i < positionCandidates.Count; i++)
+        {
+            positionCandidates[i].name = "notUsed";
+        }
+    }
+
+
+
+
+
+}
+
+
+
 [System.Serializable]
 public class Loop
 {
@@ -136,132 +248,6 @@ public class Loop
         }
         return -1;
     }
-
-    
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public class PlaceRandomRooms : MonoBehaviour
-{
-
-    public List<Loop> loops = new List<Loop>();
-
-    private DistributePortals portalPlacer;
-    private List<PlaceRandomPrefabs> itemPlacers = new List<PlaceRandomPrefabs>();
-
-
-    private void Awake()
-    {
-        itemPlacers = new List<PlaceRandomPrefabs>(FindObjectsOfType<PlaceRandomPrefabs>());
-        portalPlacer = FindObjectOfType<DistributePortals>();
-    }
-
-
-    private void Start()
-    {
-        DestroyInstances(loops);
-        DestroyItems();
-
-        portalPlacer.SetAllUnused();
-
-        foreach (Loop loop in loops)
-        {
-            loop.setNumsOfRoomsAndPairs();
-            loop.AddEternalRooms();
-            PlaceRoomsIn(loop);
-            loop.MakePairs();
-            if (loop.pair1.Count == 0 | loop.pair2.Count == 0) continue;     
-            portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
-   
-        }
-
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-
-        }
-    }
-
-    
-
-    void PlaceRoomsIn(Loop loop)
-    {
-        for (int i = 0; i < loop.numOfRooms; i++)
-        {
-            GameObject prefab = loop.prefabsList[Random.Range(0, loop.prefabsList.Count)];
-
-            GameObject prefabInstance = Instantiate(prefab, transform);
-            prefabInstance.transform.position = loop.startPosition.position + Vector3.left * i * loop.gapDistance;
-
-            //prefabInstance.name = prefab.name + " - " + prefabInstance.GetInstanceID();
-
-            loop.prefabInstances.Add(prefabInstance);
-
-            // place random items in the room
-            //itemPlacers[0].PlacePrefabsAtPosotions(new List<Transform>(prefabInstance.transform.GetChild(1).transform.GetChild(1).GetComponentsInChildren<Transform>()));
-        }
-    }
-
-
-
-    void DestroyInstances(List<Loop> loops)
-    {
-        foreach (Loop loop in loops)
-        {
-            //prefabInstances.Remove(startRoom);
-            //prefabInstances.Remove(endRoom);
-            //SetPortalCandidatesNotUsed(new List<Transform>(startRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
-            //SetPortalCandidatesNotUsed(new List<Transform>(endRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
-            for (int i = 0; i < loop.prefabInstances.Count; i++)
-            {
-                Destroy(loop.prefabInstances[i]);
-            }
-            loop.prefabInstances.Clear();
-            //Debug.Log("DestroyInstances() is done.");
-            //Debug.Log(prefabInstances.Count);
-        }
-
-    }
-
-
-
-    void DestroyItems()
-    {
-        //itemPlacers[0].DestroyInstances();
-    }
-
-
-
-
-    void SetPortalCandidatesNotUsed(List<Transform> positionCandidates)
-    {
-        positionCandidates.Remove(positionCandidates[0]);
-        for (int i = 0; i < positionCandidates.Count; i++)
-        {
-            positionCandidates[i].name = "notUsed";
-        }
-    }
-
-
 
 
 
