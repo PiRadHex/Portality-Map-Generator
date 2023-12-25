@@ -22155,11 +22155,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loops:
   - eternalRooms: []
-    prefabsList:
+    roomPrefabsList:
     - {fileID: 4048381108373248501, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
     startPosition: {fileID: 1632465590}
-    minRooms: 5
-    maxRooms: 10
+    minRooms: 40
+    maxRooms: 50
     gapDistance: 20
     pairRatio: 2
     prefabInstances: []
@@ -22207,6 +22207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c27fc2c71afd0845929f5577cef268b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 0
 --- !u!1001 &1635444483
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
+[RequireComponent(typeof(DistributePortals))]
 public class RoomsManager : MonoBehaviour
 {
 
     public List<Loop> loops = new List<Loop>();
 
     private DistributePortals portalPlacer;
-    private List<PlaceRandomPrefabs> itemPlacers = new List<PlaceRandomPrefabs>();
 
 
     private void Awake()
     {
-        itemPlacers = new List<PlaceRandomPrefabs>(FindObjectsOfType<PlaceRandomPrefabs>());
-        portalPlacer = FindObjectOfType<DistributePortals>();
+        portalPlacer = GetComponent<DistributePortals>();
     }
 
 
@@ -54,7 +52,7 @@ public class RoomsManager : MonoBehaviour
     {
         for (int i = 0; i < loop.numOfRooms; i++)
         {
-            GameObject prefab = loop.prefabsList[Random.Range(0, loop.prefabsList.Count)];
+            GameObject prefab = loop.roomPrefabsList[Random.Range(0, loop.roomPrefabsList.Count)];
 
             GameObject prefabInstance = Instantiate(prefab, transform);
             prefabInstance.transform.position = loop.startPosition.position + Vector3.left * i * loop.gapDistance;
@@ -120,7 +118,7 @@ public class RoomsManager : MonoBehaviour
 public class Loop
 {
     public List<GameObject> eternalRooms = new List<GameObject>();
-    public List<GameObject> prefabsList = new List<GameObject>();
+    public List<GameObject> roomPrefabsList = new List<GameObject>();
     public Transform startPosition;
     public int minRooms;
     public int maxRooms;
@@ -136,6 +134,7 @@ public class Loop
 
     public void setNumsOfRoomsAndPairs()
     {
+        
         numOfRooms = Random.Range(minRooms, maxRooms);
         numOfPairPortals = Random.Range((numOfRooms + eternalRooms.Count) * Mathf.RoundToInt(pairRatio) - 1, (numOfRooms + eternalRooms.Count) * Mathf.RoundToInt(pairRatio));
     }

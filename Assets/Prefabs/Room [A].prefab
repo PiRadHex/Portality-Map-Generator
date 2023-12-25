@@ -140,12 +140,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalCandidates:
-  - {fileID: 5184260907127146292}
-  - {fileID: 105952675654513645}
-  - {fileID: 263464491761532308}
-  - {fileID: 6487262879988099212}
-  - {fileID: 6174059650785144746}
-  - {fileID: 5308558035049255112}
+  - transform: {fileID: 5184260907127146292}
+    isEmpty: 0
+  - transform: {fileID: 105952675654513645}
+    isEmpty: 0
+  - transform: {fileID: 263464491761532308}
+    isEmpty: 0
+  - transform: {fileID: 6487262879988099212}
+    isEmpty: 0
+  - transform: {fileID: 6174059650785144746}
+    isEmpty: 0
+  - transform: {fileID: 5308558035049255112}
+    isEmpty: 0
 --- !u!1 &5318214834796829457
 GameObject:
   m_ObjectHideFlags: 0

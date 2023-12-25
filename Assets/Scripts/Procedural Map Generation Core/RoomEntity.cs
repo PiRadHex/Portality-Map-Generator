@@ -11,7 +11,7 @@ public class RoomEntity : MonoBehaviour
         public bool isEmpty;
     }
 
-    private List<PortalCandidate> portalCandidates = new List<PortalCandidate>();
+    [SerializeField] private List<PortalCandidate> portalCandidates = new List<PortalCandidate>();
 
     public List<PortalCandidate> GetPortalCandidates() { return portalCandidates; }
 
