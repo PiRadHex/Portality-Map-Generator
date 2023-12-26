@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using PiRadHex.CustomGizmos;
-using static RoomEntity;
+using PiRadHex.Shuffle;
 
 [RequireComponent(typeof(DistributePortals))]
 public class RoomsManager : MonoBehaviour
@@ -44,7 +44,19 @@ public class RoomsManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            DestroyInstances(loops);
+            portalPlacer.SetAllUnused();
 
+            foreach (Loop loop in loops)
+            {
+                loop.setNumsOfRoomsAndPairs();
+                loop.AddEternalRooms();
+                PlaceRoomsIn(loop);
+                loop.MakePairs();
+                if (loop.pair1.Count == 0 | loop.pair2.Count == 0) continue;
+                portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
+
+            }
         }
     }
 
@@ -76,8 +88,7 @@ public class RoomsManager : MonoBehaviour
         {
             //prefabInstances.Remove(startRoom);
             //prefabInstances.Remove(endRoom);
-            //SetPortalCandidatesNotUsed(new List<Transform>(startRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
-            //SetPortalCandidatesNotUsed(new List<Transform>(endRoom.transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>()));
+
             for (int i = 0; i < loop.prefabInstances.Count; i++)
             {
                 Destroy(loop.prefabInstances[i]);
@@ -94,18 +105,6 @@ public class RoomsManager : MonoBehaviour
     void DestroyItems()
     {
         //itemPlacers[0].DestroyInstances();
-    }
-
-
-
-
-    void SetPortalCandidatesNotUsed(List<Transform> positionCandidates)
-    {
-        positionCandidates.Remove(positionCandidates[0]);
-        for (int i = 0; i < positionCandidates.Count; i++)
-        {
-            positionCandidates[i].name = "notUsed";
-        }
     }
 
     private void OnDrawGizmosSelected()
@@ -169,7 +168,7 @@ public class Loop
     {
         pair1.Clear();
         pair2.Clear();
-        ShuffleList(prefabInstances);
+        ShuffleList.FisherYates(ref prefabInstances);
         Debug.Log("=-=-=-=-=-= makePairs() =-=-=-=-=-=");
         Debug.Log("numOfRooms= " + numOfRooms);
         Debug.Log("prefabInstances.Count= " + prefabInstances.Count);
@@ -204,24 +203,11 @@ public class Loop
 
     }
 
-
-    private void ShuffleList<T>(List<T> list)
-    {
-        // Fisher-Yates shuffle algorithm
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int randomIndex = Random.Range(0, i + 1);
-            T temp = list[i];
-            list[i] = list[randomIndex];
-            list[randomIndex] = temp;
-        }
-    }
-
     private Transform SelectPositionCandidate(int index)
     {
         List<Transform> positionCandidates = new List<Transform>(prefabInstances[index].transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>());
         positionCandidates.Remove(positionCandidates[0]);
-        ShuffleList(positionCandidates);
+        ShuffleList.FisherYates(ref positionCandidates);
         for (int i = 0; i < positionCandidates.Count; i++)
         {
             if (positionCandidates[i].name == "used") continue;
