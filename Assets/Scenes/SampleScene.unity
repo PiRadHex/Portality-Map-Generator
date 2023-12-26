@@ -22161,7 +22161,7 @@ MonoBehaviour:
     minRooms: 40
     maxRooms: 50
     gapDistance: 20
-    pairRatio: 2
+    pairRatio: 1
     prefabInstances: []
     pair1: []
     pair2: []

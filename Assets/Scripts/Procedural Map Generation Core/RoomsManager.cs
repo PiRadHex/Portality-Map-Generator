@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using PiRadHex.CustomGizmos;
+using static RoomEntity;
 
 [RequireComponent(typeof(DistributePortals))]
 public class RoomsManager : MonoBehaviour
@@ -106,7 +108,23 @@ public class RoomsManager : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
+        if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 100) { return; }
 
+        foreach (var loop in loops)
+        {
+            if (loop.startPosition != null)
+            {
+                Gizmos.color = Color.blue;
+                CustomGizmos.DrawTriangle(loop.startPosition.position, - loop.startPosition.right);
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(loop.startPosition.position, 0.1f);
+            }
+        }
+    }
 
 
 

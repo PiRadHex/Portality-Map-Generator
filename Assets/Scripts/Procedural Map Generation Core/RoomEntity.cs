@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using PiRadHex.CustomGizmos;
 
 public class RoomEntity : MonoBehaviour
 {
@@ -29,33 +30,32 @@ public class RoomEntity : MonoBehaviour
     }
 
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        //var sceneCamera = Application.isPlaying? Camera.main : SceneView.currentDrawingSceneView.camera;
-        if (Vector3.Distance(SceneView.currentDrawingSceneView.camera.transform.position, transform.position) > 20f) return;
+        var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
+        if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 20f) { return; }
 
         foreach (var candidate in portalCandidates)
         {
             if (candidate.transform != null)
             {
-                DrawTriangle(candidate.transform.position, candidate.transform.forward, Color.blue);
+                if (candidate.isEmpty)
+                {
+                    Gizmos.color = Color.blue;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                
+                CustomGizmos.DrawTriangle(candidate.transform.position, candidate.transform.forward);
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
         }
     }
 
-    private void DrawTriangle(Vector3 position, Vector3 direction, Color color, float size = 1f)
-    {
-        Gizmos.color = color;
-
-        int fillerLines = Mathf.CeilToInt(Mathf.Pow(2, 6));
-        for (int i = 0; i < fillerLines; i++)
-        {
-            Gizmos.DrawCube(position + i * direction * size / fillerLines, new Vector3(0.02f, 0.001f, 0.4f - i / (fillerLines / 4f * 10f)));
-        }
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(position, 0.1f);
-        
-    }
+    
 
 }

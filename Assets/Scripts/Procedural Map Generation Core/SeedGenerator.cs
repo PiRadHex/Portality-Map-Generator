@@ -70,6 +70,9 @@ public class SeedGenerator : MonoBehaviour
 
         // Initialize Unity's Random number generator with the generated seed
         UnityEngine.Random.InitState(seed);
+#pragma warning disable CS0618 // Type or member is obsolete
+        Debug.Log("UnityEngine.Random.seed = " + UnityEngine.Random.seed);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     /// <summary>
@@ -91,5 +94,9 @@ public class SeedGenerator : MonoBehaviour
 
         // Initialize Unity's Random number generator with the custom seed
         UnityEngine.Random.InitState(seed);
+#pragma warning disable CS0618 // Type or member is obsolete
+        Debug.Log("UnityEngine.Random.seed = " + UnityEngine.Random.seed);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }
+
