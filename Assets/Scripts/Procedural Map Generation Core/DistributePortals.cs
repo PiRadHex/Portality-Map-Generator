@@ -53,7 +53,7 @@ public class DistributePortals : MonoBehaviour
 
             portalPairs[i].isUsed = true;
 
-            portalPairs[i].portal1.parent.gameObject.SetActive(true);
+            //portalPairs[i].portal1.parent.gameObject.SetActive(true);
         }
     }
 
@@ -69,7 +69,7 @@ public class DistributePortals : MonoBehaviour
 
             portalPairs[i].isUsed = false;
 
-            portalPairs[i].portal1.parent.gameObject.SetActive(false);
+            //portalPairs[i].portal1.parent.gameObject.SetActive(false);
         }
     }
 

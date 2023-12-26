@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using PiRadHex.CustomGizmos;
+using PiRadHex.Shuffle;
 
 public class RoomEntity : MonoBehaviour
 {
@@ -14,7 +15,10 @@ public class RoomEntity : MonoBehaviour
 
     [SerializeField] private List<PortalCandidate> portalCandidates = new List<PortalCandidate>();
 
-    public List<PortalCandidate> GetPortalCandidates() { return portalCandidates; }
+    private void Awake()
+    {
+        ResetPortalCandidates();
+    }
 
     public void ResetPortalCandidates()
     {
@@ -24,11 +28,37 @@ public class RoomEntity : MonoBehaviour
         }
     }
 
-    private void Awake()
+    public Transform GetRandomCandidate()
     {
-        ResetPortalCandidates();
+        ShuffleList.FisherYates(ref portalCandidates);
+        foreach (var candidate in portalCandidates)
+        {
+            if (candidate.isEmpty == true)
+            {
+                candidate.isEmpty = false;
+                return candidate.transform;
+            }
+        }
+        return null;
     }
 
+    public int GetAvailableCandidateCount()
+    {
+        int count = 0;
+        foreach (var candidate in portalCandidates)
+        {
+            if (candidate.isEmpty == true)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int GetTotalCandidateCount()
+    {
+        return portalCandidates.Count;
+    }
 
     private void OnDrawGizmosSelected()
     {
@@ -55,7 +85,5 @@ public class RoomEntity : MonoBehaviour
             }
         }
     }
-
-    
 
 }

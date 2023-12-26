@@ -4,63 +4,51 @@ using UnityEngine;
 using UnityEditor;
 using PiRadHex.CustomGizmos;
 using PiRadHex.Shuffle;
+using JetBrains.Annotations;
 
 [RequireComponent(typeof(DistributePortals))]
 public class RoomsManager : MonoBehaviour
 {
-
     public List<Loop> loops = new List<Loop>();
-
     private DistributePortals portalPlacer;
-
 
     private void Awake()
     {
         portalPlacer = GetComponent<DistributePortals>();
     }
 
-
     private void Start()
     {
-        DestroyInstances(loops);
-        DestroyItems();
-
-        portalPlacer.SetAllUnused();
-
-        foreach (Loop loop in loops)
-        {
-            loop.setNumsOfRoomsAndPairs();
-            loop.AddEternalRooms();
-            PlaceRoomsIn(loop);
-            loop.MakePairs();
-            if (loop.pair1.Count == 0 | loop.pair2.Count == 0) continue;     
-            portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
-   
-        }
-
+        GenerateProceduralPortalityMap();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            DestroyInstances(loops);
-            portalPlacer.SetAllUnused();
-
-            foreach (Loop loop in loops)
-            {
-                loop.setNumsOfRoomsAndPairs();
-                loop.AddEternalRooms();
-                PlaceRoomsIn(loop);
-                loop.MakePairs();
-                if (loop.pair1.Count == 0 | loop.pair2.Count == 0) continue;
-                portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
-
-            }
+            SeedGenerator.Instance.GenerateNewSeed();
+            GenerateProceduralPortalityMap();
         }
     }
 
-    
+    public void GenerateProceduralPortalityMap()
+    {
+        DestroyInstances(loops);
+        portalPlacer.SetAllUnused();
+
+        foreach (Loop loop in loops)
+        {
+            loop.Clear();
+            loop.SetNumsOfRooms();
+            loop.AddEternalRooms();
+            PlaceRoomsIn(loop);
+            loop.SetNumOfPairs();
+            loop.MakePairs();
+            if (loop.pair1.Count == 0 || loop.pair2.Count == 0) continue;
+            portalPlacer.PlaceLinkedPortals(loop.pair1, loop.pair2);
+
+        }
+    }
 
     void PlaceRoomsIn(Loop loop)
     {
@@ -71,40 +59,34 @@ public class RoomsManager : MonoBehaviour
             GameObject prefabInstance = Instantiate(prefab, transform);
             prefabInstance.transform.position = loop.startPosition.position + Vector3.left * i * loop.gapDistance;
 
-            //prefabInstance.name = prefab.name + " - " + prefabInstance.GetInstanceID();
-
             loop.prefabInstances.Add(prefabInstance);
 
-            // place random items in the room
-            //itemPlacers[0].PlacePrefabsAtPosotions(new List<Transform>(prefabInstance.transform.GetChild(1).transform.GetChild(1).GetComponentsInChildren<Transform>()));
+            RoomEntity roomEntity = prefabInstance.GetComponent<RoomEntity>();
+            if (roomEntity != null)
+            {
+                loop.roomEntities.Add(roomEntity);
+            }
+            
         }
     }
-
-
 
     void DestroyInstances(List<Loop> loops)
     {
         foreach (Loop loop in loops)
         {
-            //prefabInstances.Remove(startRoom);
-            //prefabInstances.Remove(endRoom);
-
-            for (int i = 0; i < loop.prefabInstances.Count; i++)
+            foreach (var room in loop.roomEntities)
             {
-                Destroy(loop.prefabInstances[i]);
+                room.ResetPortalCandidates();
             }
+            foreach (var prefab in loop.prefabInstances)
+            {
+                Destroy(prefab);
+            }
+
+            loop.roomEntities.Clear();
             loop.prefabInstances.Clear();
-            //Debug.Log("DestroyInstances() is done.");
-            //Debug.Log(prefabInstances.Count);
         }
 
-    }
-
-
-
-    void DestroyItems()
-    {
-        //itemPlacers[0].DestroyInstances();
     }
 
     private void OnDrawGizmosSelected()
@@ -125,8 +107,6 @@ public class RoomsManager : MonoBehaviour
         }
     }
 
-
-
 }
 
 
@@ -134,33 +114,46 @@ public class RoomsManager : MonoBehaviour
 [System.Serializable]
 public class Loop
 {
-    public List<GameObject> eternalRooms = new List<GameObject>();
+    [SerializeField] private List<RoomEntity> eternalRooms = new List<RoomEntity>();
     public List<GameObject> roomPrefabsList = new List<GameObject>();
     public Transform startPosition;
-    public int minRooms;
-    public int maxRooms;
+    [SerializeField] private int minRooms;
+    [SerializeField] private int maxRooms;
     public int gapDistance;
-    [Range(1f, 2f)]
-    public float pairRatio = 1f;
+    [SerializeField][Range(0f, 1f)] private float pairRatio = 0f;
 
     [HideInInspector] public List<GameObject> prefabInstances = new List<GameObject>();
+    [HideInInspector] public List<RoomEntity> roomEntities = new List<RoomEntity>();
     [HideInInspector] public List<Transform> pair1 = new List<Transform>();
     [HideInInspector] public List<Transform> pair2 = new List<Transform>();
     [HideInInspector] public int numOfRooms;
     [HideInInspector] public int numOfPairPortals;
 
-    public void setNumsOfRoomsAndPairs()
+    public void SetNumsOfRooms()
     {
-        
         numOfRooms = Random.Range(minRooms, maxRooms);
-        numOfPairPortals = Random.Range((numOfRooms + eternalRooms.Count) * Mathf.RoundToInt(pairRatio) - 1, (numOfRooms + eternalRooms.Count) * Mathf.RoundToInt(pairRatio));
+    }
+
+    public void SetNumOfPairs()
+    {
+        numOfPairPortals = Random.Range(roomEntities.Count * Mathf.FloorToInt(pairRatio + 1) - 1,
+                                        Mathf.Min(roomEntities.Count * (Mathf.FloorToInt(MinTotalCandidate() / 2 * pairRatio) + 1),
+                                                  roomEntities.Count * Mathf.FloorToInt(MinTotalCandidate() / 2)));
     }
 
     public void AddEternalRooms()
     {
-        foreach (GameObject e in eternalRooms)
+        foreach (var e in eternalRooms)
         {
-            prefabInstances.Add(e.transform.GetChild(0).gameObject);
+            roomEntities.Add(e);
+        }
+    }
+
+    public void Clear()
+    {
+        foreach (var room in roomEntities)
+        {
+            room.ResetPortalCandidates();
         }
     }
 
@@ -168,67 +161,50 @@ public class Loop
     {
         pair1.Clear();
         pair2.Clear();
-        ShuffleList.FisherYates(ref prefabInstances);
+        ShuffleList.FisherYates(ref roomEntities);
         Debug.Log("=-=-=-=-=-= makePairs() =-=-=-=-=-=");
         Debug.Log("numOfRooms= " + numOfRooms);
-        Debug.Log("prefabInstances.Count= " + prefabInstances.Count);
+        Debug.Log("roomEntities.Count= " + roomEntities.Count);
         Debug.Log("numOfPairPortals= " + numOfPairPortals);
 
         for (int i = 0; i < numOfPairPortals; i++)
         {
-            int index = i > prefabInstances.Count - 1 ? i - prefabInstances.Count : i;
-            Transform pair1NextCandidate = SelectPositionCandidate(index);
-            if (pair1NextCandidate == null) continue;
-            pair1.Add(pair1NextCandidate);
-            int linkedRoomIndex = FindFirstEmptyRoomIndex(index + 1);
-            if (linkedRoomIndex != -1)
+            int index = i > roomEntities.Count - 1 ? i % roomEntities.Count : i;
+            if (roomEntities[index].GetAvailableCandidateCount() > 0)
             {
-                pair2.Add(SelectPositionCandidate(linkedRoomIndex));
-            }
-            else
-            {
-                linkedRoomIndex = FindFirstNotFilledRoomIndex();
+                pair1.Add(roomEntities[index].GetRandomCandidate());
+
+                int linkedRoomIndex = FindFirstEmptyRoomIndex(index + 1);
                 if (linkedRoomIndex != -1)
                 {
-                    pair2.Add(SelectPositionCandidate(linkedRoomIndex));
+                    pair2.Add(roomEntities[linkedRoomIndex].GetRandomCandidate());
                 }
                 else
                 {
-                    pair1.Remove(pair1[pair1.Count - 1]);
-                    Debug.Log("=-=-=-=-=-= The End? =-=-=-=-=-=");
-                    return;
+                    linkedRoomIndex = FindFirstNotFilledRoomIndexExcept(index);
+                    if (linkedRoomIndex != -1)
+                    {
+                        pair2.Add(roomEntities[linkedRoomIndex].GetRandomCandidate());
+                    }
+                    else
+                    {
+                        pair1.Remove(pair1[pair1.Count - 1]);
+                        Debug.Log("=-=-=-=-=-= The End? =-=-=-=-=-=");
+                        return;
+                    }
                 }
             }
+            
+            
         }
 
-    }
-
-    private Transform SelectPositionCandidate(int index)
-    {
-        List<Transform> positionCandidates = new List<Transform>(prefabInstances[index].transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>());
-        positionCandidates.Remove(positionCandidates[0]);
-        ShuffleList.FisherYates(ref positionCandidates);
-        for (int i = 0; i < positionCandidates.Count; i++)
-        {
-            if (positionCandidates[i].name == "used") continue;
-            positionCandidates[i].name = "used";
-            return positionCandidates[i];
-        }
-        return null;
     }
 
     private int FindFirstEmptyRoomIndex(int index)
     {
-        for (int i = index; i < prefabInstances.Count; i++)
+        for (int i = index; i < roomEntities.Count; i++)
         {
-            bool isEmpty = false;
-            List<Transform> positionCandidates = new List<Transform>(prefabInstances[i].transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>());
-            for (int j = 0; j < positionCandidates.Count; j++)
-            {
-                if (positionCandidates[j].name == "used") break;
-                isEmpty = true;
-            }
-            if (isEmpty)
+            if (roomEntities[i].GetAvailableCandidateCount() == roomEntities[i].GetTotalCandidateCount())
             {
                 return i;
             }
@@ -236,22 +212,31 @@ public class Loop
         return -1;
     }
 
-    private int FindFirstNotFilledRoomIndex()
+    private int FindFirstNotFilledRoomIndexExcept(int index)
     {
-        for (int i = 0; i < prefabInstances.Count; i++)
+        for (int i = 0; i < roomEntities.Count; i++)
         {
-            List<Transform> positionCandidates = new List<Transform>(prefabInstances[i].transform.GetChild(1).transform.GetChild(0).GetComponentsInChildren<Transform>());
-            for (int j = 0; j < positionCandidates.Count; j++)
+            if (i == index) continue;
+            if (roomEntities[i].GetAvailableCandidateCount() > 0)
             {
-                if (positionCandidates[j].name != "used")
-                {
-                    return i;
-                }
+                return i;
             }
         }
         return -1;
     }
 
-
+    private int MinTotalCandidate()
+    {
+        int min = Mathf.RoundToInt(Mathf.Infinity);
+        foreach (var room in roomEntities)
+        {
+            int total = room.GetTotalCandidateCount();
+            if (min < total)
+            {
+                min = total;
+            }
+        }
+        return min;
+    }
 
 }

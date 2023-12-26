@@ -75,6 +75,10 @@ PrefabInstance:
       propertyPath: linkedPortal
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3743597651704331078, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
+      propertyPath: recursionLimit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3743597651704331079, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: m_Size.x
       value: 4.08
