@@ -102,6 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7139867647177061589}
+  - component: {fileID: 4920577683976254043}
   m_Layer: 0
   m_Name: Room [A]
   m_TagString: Untagged
@@ -126,6 +127,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4920577683976254043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4048381108373248501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a61e3a939b7d5468d5c182bf11d64a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalCandidates:
+  - transform: {fileID: 5184260907127146292}
+    isEmpty: 1
+  - transform: {fileID: 105952675654513645}
+    isEmpty: 1
+  - transform: {fileID: 263464491761532308}
+    isEmpty: 1
+  - transform: {fileID: 6487262879988099212}
+    isEmpty: 1
+  - transform: {fileID: 6174059650785144746}
+    isEmpty: 1
+  - transform: {fileID: 5308558035049255112}
+    isEmpty: 1
 --- !u!1 &5318214834796829457
 GameObject:
   m_ObjectHideFlags: 0
