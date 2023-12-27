@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8353,7 +8353,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &714004660
 PrefabInstance:
@@ -11002,7 +11002,7 @@ Transform:
   - {fileID: 1642712338}
   - {fileID: 548097168}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &887902986
 PrefabInstance:
@@ -21607,7 +21607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1535381019623673786, guid: 5101aee443b6c4e028aae23d799c5fa4, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1535381019623673786, guid: 5101aee443b6c4e028aae23d799c5fa4, type: 3}
       propertyPath: m_LocalScale.x
@@ -22440,8 +22440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1632465590}
   - component: {fileID: 1632465591}
-  - component: {fileID: 1632465588}
-  - component: {fileID: 1632465589}
+  - component: {fileID: 1632465592}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -22449,47 +22448,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1632465588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1632465587}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00008579ea647df4b9c286d70236beb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loops:
-  - eternalRooms: []
-    roomPrefabsList:
-    - {fileID: 4048381108373248501, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
-    - {fileID: 2050854541324168036, guid: 6866f164a87431e4597b2273ac49813f, type: 3}
-    startPosition: {fileID: 1632465590}
-    minRooms: 5
-    maxRooms: 10
-    gapDistance: 20
-    pairRatio: 0.5
-    prefabInstances: []
-    roomEntities: []
-    pair1: []
-    pair2: []
-    numOfRooms: 0
-    numOfPairPortals: 0
---- !u!114 &1632465589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1632465587}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b9cea55ccfb8954a873254240550146, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EternalPortals: {fileID: 880484375}
 --- !u!4 &1632465590
 Transform:
   m_ObjectHideFlags: 0
@@ -22504,7 +22462,7 @@ Transform:
   m_Children:
   - {fileID: 310261395}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1632465591
 MonoBehaviour:
@@ -22519,6 +22477,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
+--- !u!114 &1632465592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632465587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35dba8b458c8d8a409b64f57e0a11401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomPrefabsList:
+  - {fileID: 4048381108373248501, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
+  - {fileID: 2050854541324168036, guid: 6866f164a87431e4597b2273ac49813f, type: 3}
+  startPosition: {fileID: 1632465590}
+  minRooms: 5
+  maxRooms: 10
+  pairRatio: 0.5
+  gapDistance: 20
+  EternalPortals: {fileID: 880484375}
+  paths: []
+  allowLoops: 0
 --- !u!1001 &1635189089
 PrefabInstance:
   m_ObjectHideFlags: 0

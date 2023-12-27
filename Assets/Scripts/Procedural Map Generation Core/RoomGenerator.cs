@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 using Unity.VisualScripting;
 using System;
 
-[RequireComponent(typeof(DistributePortals))]
+
 public class RoomGenerator : MonoBehaviour
 {
 
