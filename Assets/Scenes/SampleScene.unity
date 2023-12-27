@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -22458,13 +22458,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomPrefabsList:
-  - {fileID: 4048381108373248501, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
-  - {fileID: 2050854541324168036, guid: 6866f164a87431e4597b2273ac49813f, type: 3}
+  - {fileID: 913185506369922046, guid: 7d757524136f9af42aee506924afcf3a, type: 3}
+  - {fileID: 9173516043799049997, guid: bad3cc4697a3a8f40bd2dcea6e859474, type: 3}
+  - {fileID: 4200446215947683136, guid: db825e60bd4c77b4bbfc198590e290ea, type: 3}
+  - {fileID: 8082768456451578287, guid: 8c8d9dfa13806ee479746abefbb8c217, type: 3}
+  - {fileID: 1249952990740473068, guid: c84428e324bf1dd469243e34dff03899, type: 3}
+  - {fileID: 4135396758237809953, guid: ee8140ebc2f90224691c6ec2c0d1c43d, type: 3}
+  - {fileID: 1885350602078680699, guid: bc1b60feaf5751c489439bf63d480be9, type: 3}
+  - {fileID: 8250187175846384510, guid: 2a3c3c5c0ca0ad244bff1d840768c5b6, type: 3}
+  - {fileID: 5448402341744276759, guid: 4a3f93863711e4c4fa37247c86a46805, type: 3}
+  - {fileID: 5484990600349057394, guid: 2cc76bdcdc9dbd147987aaf55c7303b9, type: 3}
+  - {fileID: 6054986443472311181, guid: 2e11037315eecaa4a95b65eae07703f4, type: 3}
+  - {fileID: 5057672424502057664, guid: 5c57cfb36e8efb248b90f49f69709e6d, type: 3}
+  - {fileID: 5225600686883217008, guid: 0c9441db32212e24c8f631b56802e250, type: 3}
+  - {fileID: 8930454626167022434, guid: 498b1d9baf76d214094475cdc5384b0f, type: 3}
+  - {fileID: 8849756671421280721, guid: b89ec93d3e0aecd429847fa3bec85b77, type: 3}
   startPosition: {fileID: 1632465590}
-  minRooms: 5
-  maxRooms: 10
+  minRooms: 20
+  maxRooms: 50
   pairRatio: 0.5
-  gapDistance: 20
+  gapDistance: 50
   EternalPortals: {fileID: 880484375}
   paths: []
   allowLoops: 0
