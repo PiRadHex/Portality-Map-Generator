@@ -63,7 +63,7 @@ public class RoomEntity : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
-        if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 20f) { return; }
+        if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
 
         foreach (var candidate in portalCandidates)
         {
