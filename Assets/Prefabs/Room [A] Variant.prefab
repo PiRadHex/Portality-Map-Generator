@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Room [A] Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4573555174397672074, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
+      propertyPath: m_Name
+      value: Model Room [A]
+      objectReference: {fileID: 0}
     - target: {fileID: 7139867647177061589, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
       propertyPath: m_RootOrder
       value: 0
