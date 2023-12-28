@@ -24,9 +24,20 @@ namespace PiRadHex
             public static void DrawTriangle(Vector3 position, Vector3 direction, float size = 1f, float baseLength = 0.4f, int fillNum = 6, float fillerLineWidth = 0.02f, float fillerLineHeight = 0.001f)
             {
                 int fillerLines = Mathf.CeilToInt(Mathf.Pow(2, fillNum));
-                for (int i = 0; i < fillerLines; i++)
+
+                if (Mathf.Abs(Vector3.Dot(direction.normalized, Vector3.right)) >= 0.707f)
                 {
-                    Gizmos.DrawCube(position + i * direction * size / fillerLines, new Vector3(fillerLineWidth, fillerLineHeight, baseLength - i / (fillerLines / baseLength)));
+                    for (int i = 0; i < fillerLines; i++)
+                    {
+                        Gizmos.DrawCube(position + i * direction * size / fillerLines, new Vector3(fillerLineWidth, fillerLineHeight, baseLength - i / (fillerLines / baseLength)));
+                    }
+                }
+                else if (Mathf.Abs(Vector3.Dot(direction.normalized, Vector3.forward)) >= 0.707f)
+                {
+                    for (int i = 0; i < fillerLines; i++)
+                    {
+                        Gizmos.DrawCube(position + i * direction * size / fillerLines, new Vector3(baseLength - i / (fillerLines / baseLength), fillerLineHeight, fillerLineWidth));
+                    }
                 }
 
             }

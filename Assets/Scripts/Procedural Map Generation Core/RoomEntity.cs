@@ -86,4 +86,31 @@ public class RoomEntity : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying) { return; }
+        var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
+        if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
+
+        foreach (var candidate in portalCandidates)
+        {
+            if (candidate.transform != null)
+            {
+                if (candidate.isEmpty)
+                {
+                    Gizmos.color = Color.blue;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+
+                CustomGizmos.DrawTriangle(candidate.transform.position, candidate.transform.forward);
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(candidate.transform.position, 0.1f);
+            }
+        }
+    }
+
 }
