@@ -37,7 +37,7 @@ public class RoomGenerator : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            SeedGenerator.Instance.GenerateNewSeed();
+            //SeedGenerator.Instance.GenerateNewSeed();
             GenerateProceduralPortalityMap();
 
         }

@@ -26,7 +26,6 @@ public class RoomsManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            SeedGenerator.Instance.GenerateNewSeed();
             GenerateProceduralPortalityMap();
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 public class FPSController : PortalTraveller
 {
     public bool isPlayer = true;
+    public CinemachineVirtualCamera virtualCamera;
 
     [Header(".:: MOVEMENT ::.")]
     public float walkSpeed = 3;
@@ -40,10 +42,18 @@ public class FPSController : PortalTraveller
 
     private CharacterController characterController;
 
+    private Vector3 initPos;
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        initPos = transform.position;
+    }
 
+    public void ResetPos()
+    {
+        transform.position = initPos;
+        Physics.SyncTransforms();
     }
 
     private void Start()
@@ -73,7 +83,7 @@ public class FPSController : PortalTraveller
         verticalRotation = Mathf.Clamp(verticalRotation, -89, 89);
 
         transform.Rotate(0f, mouseX, 0f);
-        Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        virtualCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
 
 
         // Movement
@@ -180,7 +190,7 @@ public class FPSController : PortalTraveller
         transform.eulerAngles = Vector3.up * rot.eulerAngles.y;
         lastVelocity = toPortal.TransformVector(fromPortal.InverseTransformVector(lastVelocity));
         velocity = toPortal.TransformVector (fromPortal.InverseTransformVector(velocity));
-        Physics.SyncTransforms ();
+        Physics.SyncTransforms();
     }
 
 }
