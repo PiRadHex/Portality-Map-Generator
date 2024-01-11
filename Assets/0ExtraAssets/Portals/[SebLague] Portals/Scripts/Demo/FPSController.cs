@@ -1,126 +1,185 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class FPSController : PortalTraveller {
+public class FPSController : PortalTraveller
+{
+    public bool isPlayer = true;
 
+    [Header(".:: MOVEMENT ::.")]
     public float walkSpeed = 3;
-    public float runSpeed = 6;
+    public float runSpeed = 5;
+    public float jumpHeight = 2f;
+    public float gravityMultiplier = 1.7f;
+    public float inAirSpeedMultiplier = 0.5f;
     public float smoothMoveTime = 0.1f;
-    public float jumpForce = 8;
-    public float gravity = 18;
 
+    [Header(".:: STAMINA ::.")]
+    public float maxStamina = 100f;
+    public float currentStamina;
+    public float staminaRecoveryRate = 50f;
+    public Slider staminaBarSlider;
+    public float runnigStaminaConsumptionRate = 20f;
+    public float jumpingStaminaConsumption = 20f;
+
+    [Header(".:: SETTING ::.")]
     public bool lockCursor;
-    public float mouseSensitivity = 10;
-    public Vector2 pitchMinMax = new Vector2 (-40, 85);
-    public float rotationSmoothTime = 0.1f;
+    public float mouseSensitivity = 2;
 
-    CharacterController controller;
-    Camera cam;
-    public float yaw;
-    public float pitch;
-    float smoothYaw;
-    float smoothPitch;
+    private Vector3 smoothV;
+    private float verticalRotation = 0f;
+    private float verticalVelocity = 0.0f;
+    private Vector3 velocity = Vector3.zero;
 
-    float yawSmoothV;
-    float pitchSmoothV;
-    float verticalVelocity;
-    Vector3 velocity;
-    Vector3 smoothV;
-    Vector3 rotationSmoothVelocity;
-    Vector3 currentRotation;
+    private bool isSprinting = false;
+    private bool isGrounded = false;
+    private float lastGroundedTime = 0.0f;
+    private Vector3 lastVelocity = Vector3.zero;
 
-    bool jumping;
-    float lastGroundedTime;
-    bool disabled;
+    private CharacterController characterController;
 
-    void Start () {
-        cam = Camera.main;
-        if (lockCursor) {
+    private void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+
+    }
+
+    private void Start()
+    {
+        if (lockCursor)
+        {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
-        controller = GetComponent<CharacterController> ();
-
-        yaw = transform.eulerAngles.y;
-        pitch = cam.transform.localEulerAngles.x;
-        smoothYaw = yaw;
-        smoothPitch = pitch;
     }
 
-    void Update () {
-        if (Input.GetKeyDown (KeyCode.P)) {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            Debug.Break ();
-        }
-        if (Input.GetKeyDown (KeyCode.O)) {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            disabled = !disabled;
-        }
+    private void Update()
+    {
+        if (!isPlayer) return;
 
-        if (disabled) {
-            return;
-        }
+        HandleMovement();
+        HandleStamina();
+    }
 
-        Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
+    private void HandleMovement()
+    {
+        // Mouse Look
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = -Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        Vector3 inputDir = new Vector3 (input.x, 0, input.y).normalized;
-        Vector3 worldInputDir = transform.TransformDirection (inputDir);
+        verticalRotation += mouseY;
+        verticalRotation = Mathf.Clamp(verticalRotation, -89, 89);
 
-        float currentSpeed = (Input.GetKey (KeyCode.LeftShift)) ? runSpeed : walkSpeed;
+        transform.Rotate(0f, mouseX, 0f);
+        Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+
+
+        // Movement
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        Vector3 inputDir = new Vector3(input.x, 0, input.y).normalized;
+        Vector3 worldInputDir = transform.TransformDirection(inputDir) * (isGrounded ? 1f : inAirSpeedMultiplier);
+
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
+        float currentSpeed = isSprinting && currentStamina > 0f ? runSpeed : walkSpeed;
         Vector3 targetVelocity = worldInputDir * currentSpeed;
-        velocity = Vector3.SmoothDamp (velocity, targetVelocity, ref smoothV, smoothMoveTime);
 
-        verticalVelocity -= gravity * Time.deltaTime;
-        velocity = new Vector3 (velocity.x, verticalVelocity, velocity.z);
-
-        var flags = controller.Move (velocity * Time.deltaTime);
-        if (flags == CollisionFlags.Below) {
-            jumping = false;
-            lastGroundedTime = Time.time;
-            verticalVelocity = 0;
+        if (characterController.isGrounded)
+        {
+            velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref smoothV, smoothMoveTime);
+            lastVelocity = velocity * inAirSpeedMultiplier;
+        }
+        else
+        {
+            velocity = Vector3.SmoothDamp(velocity, lastVelocity + targetVelocity, ref smoothV, smoothMoveTime);
         }
 
-        if (Input.GetKeyDown (KeyCode.Space)) {
-            float timeSinceLastTouchedGround = Time.time - lastGroundedTime;
-            if (controller.isGrounded || (!jumping && timeSinceLastTouchedGround < 0.15f)) {
-                jumping = true;
-                verticalVelocity = jumpForce;
+
+        // Gravity
+        verticalVelocity += gravityMultiplier * Physics.gravity.y * Time.deltaTime;
+        velocity = new Vector3(velocity.x, verticalVelocity, velocity.z);
+
+
+        // Ground check
+        var flags = characterController.Move(velocity * Time.deltaTime);
+        if (flags == CollisionFlags.Below)
+        {
+            isGrounded = true;
+            verticalVelocity = 0;
+
+        }
+        else if (flags == CollisionFlags.Above)
+        {
+            verticalVelocity = -inAirSpeedMultiplier * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+            isGrounded = false;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+
+        // Jump
+        if (Input.GetKey(KeyCode.Space) && Time.time - lastGroundedTime > 0.15f)
+        {
+            if (characterController.isGrounded)
+            {
+                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+                lastGroundedTime = Time.time;
+                currentStamina -= jumpingStaminaConsumption;
             }
         }
 
-        float mX = Input.GetAxisRaw ("Mouse X");
-        float mY = Input.GetAxisRaw ("Mouse Y");
+    }
 
-        // Verrrrrry gross hack to stop camera swinging down at start
-        float mMag = Mathf.Sqrt (mX * mX + mY * mY);
-        if (mMag > 5) {
-            mX = 0;
-            mY = 0;
+    private void HandleStamina()
+    {
+        if (currentStamina <= maxStamina)
+        {
+            if (isSprinting && characterController.isGrounded)
+            {
+                currentStamina -= runnigStaminaConsumptionRate * Time.deltaTime;
+            }
+            else
+            {
+                /*
+                    currentStamina += -(exp(-x) - 1):
+
+                                               /   -staminaRecoveryRate * Time.deltaTime * maxStamina  \
+                    currentStamina += 1 - exp |   ----------------------------------------------------  |
+                                               \          2 * currentStamina +  0.2 * maxStamina       /
+                */
+                currentStamina += -(Mathf.Exp(-staminaRecoveryRate * Time.deltaTime * maxStamina / ((2f * currentStamina) + (0.2f * maxStamina))) - 1f);
+            }
+
+            if (currentStamina < 0)
+            {
+                currentStamina = 0f;
+            }
+            else if (currentStamina > maxStamina)
+            {
+                currentStamina = maxStamina;
+            }
+
         }
 
-        yaw += mX * mouseSensitivity;
-        pitch -= mY * mouseSensitivity;
-        pitch = Mathf.Clamp (pitch, pitchMinMax.x, pitchMinMax.y);
-        smoothPitch = Mathf.SmoothDampAngle (smoothPitch, pitch, ref pitchSmoothV, rotationSmoothTime);
-        smoothYaw = Mathf.SmoothDampAngle (smoothYaw, yaw, ref yawSmoothV, rotationSmoothTime);
+        UpdateStaminaBar();
+    }
 
-        transform.eulerAngles = Vector3.up * smoothYaw;
-        cam.transform.localEulerAngles = Vector3.right * smoothPitch;
-
+    private void UpdateStaminaBar()
+    {
+        if (staminaBarSlider.value == 1) staminaBarSlider.enabled = false;
+        staminaBarSlider.value = currentStamina / maxStamina;
+        staminaBarSlider.enabled = true;
     }
 
     public override void Teleport (Transform fromPortal, Transform toPortal, Vector3 pos, Quaternion rot) {
         transform.position = pos;
-        Vector3 eulerRot = rot.eulerAngles;
-        float delta = Mathf.DeltaAngle (smoothYaw, eulerRot.y);
-        yaw += delta;
-        smoothYaw += delta;
-        transform.eulerAngles = Vector3.up * smoothYaw;
-        velocity = toPortal.TransformVector (fromPortal.InverseTransformVector (velocity));
+        transform.eulerAngles = Vector3.up * rot.eulerAngles.y;
+        lastVelocity = toPortal.TransformVector(fromPortal.InverseTransformVector(lastVelocity));
+        velocity = toPortal.TransformVector (fromPortal.InverseTransformVector(velocity));
         Physics.SyncTransforms ();
     }
 

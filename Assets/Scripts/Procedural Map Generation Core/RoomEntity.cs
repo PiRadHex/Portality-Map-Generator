@@ -61,7 +61,7 @@ public class RoomEntity : MonoBehaviour
     }
 
     private void OnDrawGizmosSelected()
-    {
+    {/*
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
 
@@ -83,11 +83,11 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }
+        }*/
     }
 
     private void OnDrawGizmos()
-    {
+    {/*
         if (Application.isPlaying) { return; }
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
@@ -110,7 +110,7 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }
+        }*/
     }
 
 }

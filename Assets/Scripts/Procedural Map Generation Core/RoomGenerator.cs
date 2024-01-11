@@ -90,7 +90,7 @@ public class RoomGenerator : MonoBehaviour
     }
 
     private void OnDrawGizmosSelected()
-    {
+    {/*
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 100)
         {
@@ -104,7 +104,7 @@ public class RoomGenerator : MonoBehaviour
 
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(startPosition.position, 0.1f);
-        }
+        }*/
     }
 
     public void SetNumOfRooms()
