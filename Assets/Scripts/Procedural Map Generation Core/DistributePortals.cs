@@ -38,20 +38,20 @@ public class DistributePortals : MonoBehaviour
     public void PlaceLinkedPortals(List<Transform> pair1, List<Transform> pair2)
     {
         Debug.Log("pair1.Count= " + pair1.Count + ", pair2.Count= " + pair2.Count);
+
+        int baseIndex = GetFirstUnusedPortalPairIndex();
+
         for (int i = 0; i < pair1.Count; i++)
         {
-            //Debug.Log("i= " + i);
-            if (portalPairs[i].isUsed == true) continue;
+            portalPairs[i + baseIndex].portal1.position = pair1[i].position;
+            portalPairs[i + baseIndex].portal1.rotation = pair1[i].rotation;
 
-            portalPairs[i].portal1.position = pair1[i].position;
-            portalPairs[i].portal1.rotation = pair1[i].rotation;
+            portalPairs[i + baseIndex].portal2.position = pair2[i].position;
+            portalPairs[i + baseIndex].portal2.rotation = pair2[i].rotation;
 
-            portalPairs[i].portal2.position = pair2[i].position;
-            portalPairs[i].portal2.rotation = pair2[i].rotation;
+            portalPairs[i + baseIndex].portal2.Rotate(0, 180, 0);
 
-            portalPairs[i].portal2.Rotate(0, 180, 0);
-
-            portalPairs[i].isUsed = true;
+            portalPairs[i + baseIndex].isUsed = true;
 
             //portalPairs[i].portal1.parent.gameObject.SetActive(true);
         }
@@ -71,6 +71,16 @@ public class DistributePortals : MonoBehaviour
 
             //portalPairs[i].portal1.parent.gameObject.SetActive(false);
         }
+    }
+
+    public int GetFirstUnusedPortalPairIndex()
+    {
+        for (int i = 0; i < portalPairs.Count; i++)
+        {
+            if (portalPairs[i].isUsed) continue;
+            return i;
+        }
+        return 0;
     }
 
 }

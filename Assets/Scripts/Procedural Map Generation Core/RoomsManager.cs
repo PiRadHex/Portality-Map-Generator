@@ -33,13 +33,13 @@ public class RoomsManager : MonoBehaviour
 
     public void GenerateProceduralPortalityMap()
     {
-        DestroyInstances(loops);
+        DestroyInstances();
         portalPlacer.SetAllUnused();
 
         foreach (Loop loop in loops)
         {
             loop.Clear();
-            loop.SetNumsOfRooms();
+            loop.SetNumOfRooms();
             loop.AddEternalRooms();
             PlaceRoomsIn(loop);
             loop.SetNumOfPairs();
@@ -70,9 +70,9 @@ public class RoomsManager : MonoBehaviour
         }
     }
 
-    void DestroyInstances(List<Loop> loops)
+    void DestroyInstances()
     {
-        foreach (Loop loop in loops)
+        foreach (var loop in loops)
         {
             foreach (var room in loop.roomEntities)
             {
@@ -129,7 +129,7 @@ public class Loop
     [HideInInspector] public int numOfRooms;
     [HideInInspector] public int numOfPairPortals;
 
-    public void SetNumsOfRooms()
+    public void SetNumOfRooms()
     {
         numOfRooms = Random.Range(minRooms, maxRooms);
     }

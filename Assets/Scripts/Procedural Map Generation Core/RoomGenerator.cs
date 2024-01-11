@@ -3,13 +3,11 @@ using UnityEngine;
 using UnityEditor;
 using PiRadHex.CustomGizmos;
 using PiRadHex.Shuffle;
-using JetBrains.Annotations;
 using System;
 
 
 public class RoomGenerator : MonoBehaviour
 {
-
     [SerializeField] private List<GameObject> roomPrefabsList = new List<GameObject>();
     [SerializeField] private Transform startPosition;
     [SerializeField] private int minRooms;
@@ -25,8 +23,8 @@ public class RoomGenerator : MonoBehaviour
     [SerializeField] private GameObject EternalPortals;
 
     public List<Path> paths = new List<Path>();
-    private HashSet<string> connections = new HashSet<string>();
-    public bool allowLoops = false;
+    //private HashSet<string> connections = new HashSet<string>();
+    //public bool allowLoops = false;
 
 
     private void Start()
@@ -49,7 +47,7 @@ public class RoomGenerator : MonoBehaviour
     {
         DestroyInstances();
         SetAllUnused();
-        SetNumsOfRooms();
+        SetNumOfRooms();
         GenerateTree();
         PlaceRooms();
         SetNumOfPairs();
@@ -109,7 +107,7 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
-    public void SetNumsOfRooms()
+    public void SetNumOfRooms()
     {
         numOfRooms = UnityEngine.Random.Range(minRooms, maxRooms);
     }
@@ -123,8 +121,8 @@ public class RoomGenerator : MonoBehaviour
 
     public void MakePairs()
     {
-       int i = 0;
-       foreach (var path in paths) 
+        int i = 0;
+        foreach (var path in paths) 
         {
             int[] sequence = path.GetSequence();
             for (int j = 0; j < sequence.Length - 1; j++)
@@ -201,83 +199,9 @@ public class RoomGenerator : MonoBehaviour
             EternalPortals.transform.GetChild(i).transform.GetChild(1).localPosition = Vector3.zero;
             EternalPortals.transform.GetChild(i).transform.GetChild(1).localRotation = Quaternion.identity;
 
-
-            //portalPairs[i].portal1.parent.gameObject.SetActive(false);
         }
     }
 
-    private System.Random random = new System.Random();
-
-    //private bool PathExists(int roomA, int roomB)
-    //{
-    //    foreach (var path in paths)
-    //    {
-    //        int[] sequence = path.GetSequence();
-    //        if (sequence.Length == 2 &&
-    //            ((sequence[0] == roomA && sequence[1] == roomB) || (sequence[0] == roomB && sequence[1] == roomA)))
-    //        {
-    //            return true; // Path already exists
-    //        }
-    //    }
-    //    return false; // Path doesn't exist
-    //}
-
-    //public void GenerateRandomTree(int numOfRooms)
-    //{
-    //    paths.Clear(); // Clear existing paths
-
-    //    if (numOfRooms <= 1)
-    //    {
-    //        return; // No paths in the tree for 0 or 1 node
-    //    }
-
-    //    HashSet<int> visited = new HashSet<int>();
-    //    visited.Add(0);
-
-    //    while (visited.Count < numOfRooms)
-    //    {
-    //        int newRoom = random.Next(numOfRooms); // Generate a random room
-    //        int connectingRoom = GetRandomVisitedRoom(visited);
-
-    //        // Check if roomA != roomB and if the path already exists
-    //        if (connectingRoom != newRoom && !PathExists(connectingRoom, newRoom))
-    //        {
-    //            // Calculate the path sequence between connectingRoom and newRoom
-    //            int[] pathSequence = CalculatePathSequence(connectingRoom, newRoom);
-
-    //            // Create a new Path object and assign the calculated sequence
-    //            Path newPath = new Path(pathSequence);
-    //            paths.Add(newPath);
-
-    //            visited.Add(newRoom);
-    //        }
-    //    }
-    //}
-
-    //// Helper function to get a random visited room
-    //private int GetRandomVisitedRoom(HashSet<int> visited)
-    //{
-    //    int index = random.Next(visited.Count);
-    //    int i = 0;
-    //    foreach (var room in visited)
-    //    {
-    //        if (i == index)
-    //        {
-    //            return room;
-    //        }
-    //        i++;
-    //    }
-    //    return -1; // Return -1 if something goes wrong
-    //}
-
-    //// Dummy method to calculate the path sequence between two rooms (replace with your logic)
-    //private int[] CalculatePathSequence(int roomA, int roomB)
-    //{
-    //    // Replace this logic with your own path calculation algorithm
-    //    // Here, it's a simple example generating a sequence between roomA and roomB
-    //    int[] sequence = new int[] { roomA, roomB };
-    //    return sequence;
-    //}
 
     void GenerateTree()
     {
