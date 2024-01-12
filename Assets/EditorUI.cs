@@ -37,6 +37,8 @@ public class EditorUI : MonoBehaviour
         {
             editorPanel.SetActive(!editorPanel.activeInHierarchy);
             VCam.enabled = editorPanel.activeInHierarchy;
+            Cursor.visible = editorPanel.activeInHierarchy;
+            Cursor.lockState = editorPanel.activeInHierarchy? CursorLockMode.None : CursorLockMode.Confined;
         }
         
     }
