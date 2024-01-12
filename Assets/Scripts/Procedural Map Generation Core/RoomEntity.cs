@@ -14,9 +14,14 @@ public class RoomEntity : MonoBehaviour
     }
 
     [SerializeField] private List<PortalCandidate> portalCandidates = new List<PortalCandidate>();
+    private List<PortalCandidate> portalCandidatesCopy = new List<PortalCandidate>();
 
     private void Awake()
     {
+        foreach (var candidate in portalCandidates)
+        {
+            portalCandidatesCopy.Add(candidate);
+        }
         ResetPortalCandidates();
     }
 
@@ -25,6 +30,10 @@ public class RoomEntity : MonoBehaviour
         foreach (var candidate in portalCandidates)
         {
             candidate.isEmpty = true;
+        }
+        for (int i = 0; i < portalCandidatesCopy.Count; i++)
+        {
+            portalCandidates[i] = portalCandidatesCopy[i];
         }
     }
 
@@ -87,7 +96,7 @@ public class RoomEntity : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {/*
+    {
         if (Application.isPlaying) { return; }
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
@@ -110,7 +119,7 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }*/
+        }
     }
 
 }
