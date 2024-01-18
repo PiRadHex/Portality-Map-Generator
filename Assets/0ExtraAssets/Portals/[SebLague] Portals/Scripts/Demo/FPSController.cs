@@ -52,8 +52,10 @@ public class FPSController : PortalTraveller
 
     public void ResetPos()
     {
+        gameObject.SetActive(false);
         transform.position = initPos;
         Physics.SyncTransforms();
+        gameObject.SetActive(true);
     }
 
     private void Start()
