@@ -34,6 +34,7 @@ public class RoomsManager : MonoBehaviour
     {
         DestroyInstances();
         portalPlacer.SetAllUnused();
+        portalPlacer.DestroyDoors();
 
         foreach (Loop loop in loops)
         {

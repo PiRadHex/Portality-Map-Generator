@@ -5,6 +5,7 @@ using UnityEngine;
 public class DistributePortals : MonoBehaviour
 {
     [SerializeField] private GameObject EternalPortals;
+    [SerializeField] GameObject doorPrefab;
 
     private class PortalPair
     {
@@ -23,6 +24,7 @@ public class DistributePortals : MonoBehaviour
     }
 
     private List<PortalPair> portalPairs = new List<PortalPair>();
+    private List<GameObject> doorInstances = new List<GameObject>();
 
     void Awake()
     {
@@ -45,16 +47,32 @@ public class DistributePortals : MonoBehaviour
         {
             portalPairs[i + baseIndex].portal1.position = pair1[i].position;
             portalPairs[i + baseIndex].portal1.rotation = pair1[i].rotation;
+            InstantiateDoor(pair1[i], portalPairs[i].portal1.transform);
 
             portalPairs[i + baseIndex].portal2.position = pair2[i].position;
             portalPairs[i + baseIndex].portal2.rotation = pair2[i].rotation;
+            InstantiateDoor(pair2[i], portalPairs[i].portal2.transform);
 
             portalPairs[i + baseIndex].portal2.Rotate(0, 180, 0);
 
             portalPairs[i + baseIndex].isUsed = true;
 
             //portalPairs[i].portal1.parent.gameObject.SetActive(true);
+
         }
+    }
+
+    private void InstantiateDoor(Transform _transform, Transform _parent)
+    {
+        GameObject prefabInstance = Instantiate(doorPrefab, transform);
+        prefabInstance.transform.position = _transform.position + new Vector3(0, 1.5f, 0f);
+        prefabInstance.transform.rotation = _transform.rotation;
+
+        prefabInstance.transform.SetParent(_parent);
+        prefabInstance.transform.localPosition += Vector3.forward * 0.5f;
+        prefabInstance.transform.SetParent(transform);
+
+        doorInstances.Add(prefabInstance);
     }
 
     public void SetAllUnused()
@@ -71,6 +89,16 @@ public class DistributePortals : MonoBehaviour
 
             //portalPairs[i].portal1.parent.gameObject.SetActive(false);
         }
+    }
+
+    public void DestroyDoors()
+    {
+        foreach (var door in doorInstances)
+        {
+            Destroy(door);
+        }
+
+        doorInstances.Clear();
     }
 
     public int GetFirstUnusedPortalPairIndex()
