@@ -4,28 +4,25 @@ using UnityEditor;
 using PiRadHex.CustomGizmos;
 using PiRadHex.Shuffle;
 using System;
+using ProceduralToolkit;
 
 
 public class RoomGenerator : MonoBehaviour
 {
+    [SerializeField] private List<RoomEntity> eternalRooms = new List<RoomEntity>();
     [SerializeField] private List<GameObject> roomPrefabsList = new List<GameObject>();
     [SerializeField] private Transform startPosition;
     [SerializeField] private int minRooms;
     [SerializeField] private int maxRooms;
-    [SerializeField][Range(0f, 1f)] private float pairRatio = 0f;
     [SerializeField] private int gapDistance;
 
     private List<GameObject> prefabInstances = new List<GameObject>();
     private List<RoomEntity> roomEntities = new List<RoomEntity>();
-    private int numOfRooms;
-    private int numOfPairPortals;
+    private int numOfRandomRooms;
 
     [SerializeField] private GameObject EternalPortals;
 
     public List<Path> paths = new List<Path>();
-    //private HashSet<string> connections = new HashSet<string>();
-    //public bool allowLoops = false;
-
 
     private void Start()
     {
@@ -33,31 +30,21 @@ public class RoomGenerator : MonoBehaviour
         GenerateProceduralPortalityMap();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            //SeedGenerator.Instance.GenerateNewSeed();
-            GenerateProceduralPortalityMap();
-
-        }
-    }
-
     public void GenerateProceduralPortalityMap()
     {
         DestroyInstances();
         SetAllUnused();
-        SetNumOfRooms();
-        GenerateTree();
+        SetNumOfRandomRooms();
+        AddEternalRooms();
         PlaceRooms();
-        SetNumOfPairs();
-        MakePairs();
+        GenerateTree();
+        PlacePortals();
 
     }
 
     void PlaceRooms()
     {
-        for (int i = 0; i < numOfRooms; i++)
+        for (int i = 0; i < numOfRandomRooms; i++)
         {
             GameObject prefab = roomPrefabsList[UnityEngine.Random.Range(0, roomPrefabsList.Count)];
             GameObject prefabInstance = Instantiate(prefab, transform);
@@ -107,21 +94,24 @@ public class RoomGenerator : MonoBehaviour
         }*/
     }
 
-    public void SetNumOfRooms()
+    public void SetNumOfRandomRooms()
     {
-        numOfRooms = UnityEngine.Random.Range(minRooms, maxRooms);
+        numOfRandomRooms = UnityEngine.Random.Range(minRooms, maxRooms);
     }
 
-    public void SetNumOfPairs()
+    public void AddEternalRooms()
     {
-        numOfPairPortals = UnityEngine.Random.Range(roomEntities.Count * Mathf.FloorToInt(pairRatio + 1) - 1,
-                                        Mathf.Min(roomEntities.Count * (Mathf.FloorToInt(MinTotalCandidate() / 2 * pairRatio) + 1),
-                                                  roomEntities.Count * Mathf.FloorToInt(MinTotalCandidate() / 2)));
+        foreach (var e in eternalRooms)
+        {
+            roomEntities.Add(e);
+        }
     }
 
-    public void MakePairs()
+    
+    public void PlacePortals()
     {
-        int i = 0;
+        int pairIndex = 0;
+        int totalPairs = EternalPortals.transform.childCount;
         foreach (var path in paths) 
         {
             int[] sequence = path.GetSequence();
@@ -130,63 +120,36 @@ public class RoomGenerator : MonoBehaviour
                 int first = sequence[j];
                 int second = sequence[j+1];
 
-                Transform portal1 = EternalPortals.transform.GetChild(i).transform.GetChild(0);
-                Transform portal2 = EternalPortals.transform.GetChild(i).transform.GetChild(1);
+                Transform portal1 = EternalPortals.transform.GetChild(pairIndex).transform.GetChild(0);
+                Transform portal2 = EternalPortals.transform.GetChild(pairIndex).transform.GetChild(1);
 
-                Transform t1 = roomEntities[first].GetRandomCandidate();
-                Transform t2 = roomEntities[second].GetRandomCandidate();
+                if (roomEntities[first].GetAvailableCandidateCount() > 0 && roomEntities[second].GetAvailableCandidateCount() > 0)
+                {
+                    Transform t1 = roomEntities[first].GetRandomCandidate();
+                    Transform t2 = roomEntities[second].GetRandomCandidate();
 
-                portal1.position = t1.position;
-                portal1.rotation = t1.rotation;
+                    portal1.position = t1.position;
+                    portal1.rotation = t1.rotation;
 
-                portal2.position = t2.position;
-                portal2.rotation = t2.rotation;
+                    portal2.position = t2.position;
+                    portal2.rotation = t2.rotation;
 
-                portal2.Rotate(0, 180, 0);
+                    portal2.Rotate(0, 180, 0);
 
-                i++;
+                    EternalPortals.transform.GetChild(pairIndex).gameObject.SetActive(true);
+
+                    pairIndex++;
+                }
+                else Debug.LogWarning("Portal coordinate overflow.");
+
+                if (pairIndex + 1 == totalPairs)
+                {
+                    Debug.LogWarning("Not enouph portal instances.");
+                    return;
+                }
 
             }
         }
-    }
-
-    private int FindFirstEmptyRoomIndex(int index)
-    {
-        for (int i = index; i < roomEntities.Count; i++)
-        {
-            if (roomEntities[i].GetAvailableCandidateCount() == roomEntities[i].GetTotalCandidateCount())
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private int FindFirstNotFilledRoomIndexExcept(int index)
-    {
-        for (int i = 0; i < roomEntities.Count; i++)
-        {
-            if (i == index) continue;
-            if (roomEntities[i].GetAvailableCandidateCount() > 0)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private int MinTotalCandidate()
-    {
-        int min = Mathf.RoundToInt(Mathf.Infinity);
-        foreach (var room in roomEntities)
-        {
-            int total = room.GetTotalCandidateCount();
-            if (min < total)
-            {
-                min = total;
-            }
-        }
-        return min;
     }
 
     public void SetAllUnused()
@@ -199,6 +162,11 @@ public class RoomGenerator : MonoBehaviour
             EternalPortals.transform.GetChild(i).transform.GetChild(1).localPosition = Vector3.zero;
             EternalPortals.transform.GetChild(i).transform.GetChild(1).localRotation = Quaternion.identity;
 
+            EternalPortals.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        foreach (var room in roomEntities)
+        {
+            room.ResetPortalCandidates();
         }
     }
 
@@ -206,8 +174,11 @@ public class RoomGenerator : MonoBehaviour
     void GenerateTree()
     {
         paths.Clear();
+        int[] numOfUsedCandidates = new int[roomEntities.Count];
+        Array.Clear(numOfUsedCandidates, 0, numOfUsedCandidates.Length);
+
         List<int> nodes = new List<int>();
-        for (int i = 0; i < numOfRooms; i++)
+        for (int i = 0; i < roomEntities.Count; i++)
         {
             nodes.Add(i);
         }
@@ -217,6 +188,7 @@ public class RoomGenerator : MonoBehaviour
 
             int startNode = nodes[UnityEngine.Random.Range(0, nodes.Count)];
             nodes.Remove(startNode);
+            numOfUsedCandidates[startNode]++;
 
             List<int> pathSequence = new List<int> { startNode };
             while (pathSequence.Count < nodes.Count)
@@ -225,6 +197,7 @@ public class RoomGenerator : MonoBehaviour
                 if (!pathSequence.Contains(nextNode))
                 {
                     pathSequence.Add(nextNode);
+                    numOfUsedCandidates[nextNode] += 2;
                 }
                 else
                 {
@@ -234,7 +207,19 @@ public class RoomGenerator : MonoBehaviour
 
             if (paths.Count > 0)
             {
-                pathSequence.Add (paths[0].GetSequence()[UnityEngine.Random.Range(0, paths[0].GetSequence().Length)]);
+                int[] firstSeq = paths[0].GetSequence();
+                ShuffleList.FisherYates(ref firstSeq);
+                for (int i = 0; i < firstSeq.Length; i++)
+                {
+                    int roomIndex = firstSeq[i];
+                    if (roomEntities[roomIndex].GetAvailableCandidateCount() - numOfUsedCandidates[roomIndex] > 0)
+                    {
+                        pathSequence.Add(roomIndex);
+                        numOfUsedCandidates[roomIndex]++;
+                        break;
+                    }
+                }
+
             }
 
             Path path = new Path(pathSequence.ToArray());

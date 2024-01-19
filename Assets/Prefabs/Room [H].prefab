@@ -56,6 +56,8 @@ MonoBehaviour:
     isEmpty: 1
   - transform: {fileID: 7131903391144530623}
     isEmpty: 1
+  doorPrefab: {fileID: 7276432321377762978, guid: 2eb4e4e5fb2c5fc4eaae614c343d8f7c, type: 3}
+  colors: []
 --- !u!1 &4738215222429150251
 GameObject:
   m_ObjectHideFlags: 0

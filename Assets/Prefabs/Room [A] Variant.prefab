@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model Room [A]
       objectReference: {fileID: 0}
+    - target: {fileID: 4920577683976254043, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
+      propertyPath: doorPrefab
+      value: 
+      objectReference: {fileID: 7276432321377762978, guid: 2eb4e4e5fb2c5fc4eaae614c343d8f7c, type: 3}
     - target: {fileID: 5402238383221789431, guid: 47da64b5b24c4244a9285c1213e0dbc3, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
