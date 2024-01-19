@@ -32,7 +32,7 @@ public class DistributePortals : MonoBehaviour
         for (int i = 0; i < EternalPortals.transform.childCount; i++)
         {
             Transform portal1 = EternalPortals.transform.GetChild(i).transform.GetChild(0);
-            Transform portal2 = EternalPortals.transform.GetChild(i).transform.GetChild(1);
+            Transform portal2 = EternalPortals.transform.GetChild(i).transform.GetChild(1);            
             portalPairs.Add(new PortalPair(portal1, portal2));
         }
     }
@@ -47,19 +47,21 @@ public class DistributePortals : MonoBehaviour
         {
             portalPairs[i + baseIndex].portal1.position = pair1[i].position;
             portalPairs[i + baseIndex].portal1.rotation = pair1[i].rotation;
-            InstantiateDoor(pair1[i], portalPairs[i].portal1.transform);
+            InstantiateDoor(pair1[i], portalPairs[i + baseIndex].portal1.transform);
 
             portalPairs[i + baseIndex].portal2.position = pair2[i].position;
             portalPairs[i + baseIndex].portal2.rotation = pair2[i].rotation;
-            InstantiateDoor(pair2[i], portalPairs[i].portal2.transform);
+            InstantiateDoor(pair2[i], portalPairs[i + baseIndex].portal2.transform);
 
             portalPairs[i + baseIndex].portal2.Rotate(0, 180, 0);
 
             portalPairs[i + baseIndex].isUsed = true;
-
-            //portalPairs[i].portal1.parent.gameObject.SetActive(true);
-
+            Physics.SyncTransforms();
+            portalPairs[i + baseIndex].portal1.parent.gameObject.SetActive(true);
+            
         }
+
+        
     }
 
     private void InstantiateDoor(Transform _transform, Transform _parent)
@@ -87,7 +89,7 @@ public class DistributePortals : MonoBehaviour
 
             portalPairs[i].isUsed = false;
 
-            //portalPairs[i].portal1.parent.gameObject.SetActive(false);
+            portalPairs[i].portal1.parent.gameObject.SetActive(false);
         }
     }
 
