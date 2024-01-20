@@ -164,10 +164,6 @@ public class RoomGenerator : MonoBehaviour
 
             EternalPortals.transform.GetChild(i).gameObject.SetActive(false);
         }
-        foreach (var room in roomEntities)
-        {
-            room.ResetPortalCandidates();
-        }
     }
 
 

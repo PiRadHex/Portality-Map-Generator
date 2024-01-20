@@ -3,9 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using PiRadHex.CustomGizmos;
 using PiRadHex.Shuffle;
-using UnityEditor.ShaderGraph.Drawing;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
 
 public class RoomEntity : MonoBehaviour
 {
@@ -20,11 +17,8 @@ public class RoomEntity : MonoBehaviour
     private List<PortalCandidate> portalCandidatesCopy = new List<PortalCandidate>();
 
     [SerializeField] GameObject doorPrefab;
-    [SerializeField] List<Color> colors;
-
+    public bool setRandomColor = true;
     private List<GameObject> doorInstances = new List<GameObject>();
-
-    private Color randomColor;
     private List<Material> doorMaterials = new List<Material>();
 
     private void Awake()
@@ -34,49 +28,7 @@ public class RoomEntity : MonoBehaviour
             portalCandidatesCopy.Add(candidate);
         }
         ResetPortalCandidates();
-    }
-
-    private void SetColor()
-    {
-        Material material = new Material(Shader.Find("Standard"));
-        material.color = randomColor;
-        foreach (var renderer in GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.material = material;
-        }
-    }
-
-    private void PlaceDoors()
-    {
-        foreach (var candidate in portalCandidates)
-        {
-            GameObject prefabInstance = Instantiate(doorPrefab, candidate.transform);
-            prefabInstance.transform.position = candidate.transform.position;
-            prefabInstance.transform.rotation = candidate.transform.rotation;
-            prefabInstance.transform.localPosition += Vector3.forward * 0.5f;
-
-            doorInstances.Add(prefabInstance);
-
-            SetEnableDoor(candidate.transform, false);
-        }
-
-        int i = 0;
-        foreach (var renderer in doorInstances[doorInstances.Count - 1].GetComponentsInChildren<MeshRenderer>())
-        {
-            if (doorMaterials.Count != 0) doorMaterials[i] = renderer.material;
-            else doorMaterials.Add(renderer.material);
-            i++;
-        }
-    }
-
-    private void DestroyDoors()
-    {
-        foreach (var door in doorInstances)
-        {
-            Destroy(door);
-        }
-
-        doorInstances.Clear();
+        CacheDoorMaterials();
     }
 
     public void ResetPortalCandidates()
@@ -89,8 +41,7 @@ public class RoomEntity : MonoBehaviour
         {
             portalCandidates[i] = portalCandidatesCopy[i];
         }
-        
-        randomColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+
         DestroyDoors();
         PlaceDoors();
         SetColor();
@@ -104,27 +55,11 @@ public class RoomEntity : MonoBehaviour
             if (candidate.isEmpty == true)
             {
                 candidate.isEmpty = false;
-                SetEnableDoor(candidate.transform);
+                SetDoorEnable(candidate.transform, true);
                 return candidate.transform;
             }
         }
         return null;
-    }
-
-    private void SetEnableDoor(Transform _transform, bool _mode = true)
-    {
-        foreach (var door in _transform.GetComponentsInChildren<Door>())
-        {
-            int i = 0;
-            foreach (var renderer in _transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
-            {
-                if (_mode) renderer.material = doorMaterials[i];
-                i++;
-                Debug.Log(i);
-            }
-            door.transform.GetComponent<Collider>().enabled = _mode;
-        }
-        
     }
 
     public int GetAvailableCandidateCount()
@@ -143,6 +78,73 @@ public class RoomEntity : MonoBehaviour
     public int GetTotalCandidateCount()
     {
         return portalCandidates.Count;
+    }
+
+    private void SetColor()
+    {
+        Material material = new Material(Shader.Find("Standard"));
+        material.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        if (setRandomColor)
+        {
+            foreach (var renderer in GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.material = material;
+            }
+        }
+        
+    }
+
+    private void PlaceDoors()
+    {
+        foreach (var candidate in portalCandidates)
+        {
+            GameObject prefabInstance = Instantiate(doorPrefab, candidate.transform);
+            prefabInstance.transform.position = candidate.transform.position;
+            prefabInstance.transform.rotation = candidate.transform.rotation;
+            prefabInstance.transform.localPosition += Vector3.forward * 0.5f;
+
+            doorInstances.Add(prefabInstance);
+
+            SetDoorEnable(candidate.transform, false);
+        }
+    }
+
+    private void DestroyDoors()
+    {
+        foreach (var door in doorInstances)
+        {
+            Destroy(door);
+        }
+
+        doorInstances.Clear();
+    }
+
+    private void SetDoorEnable(Transform _transform, bool _mode = true)
+    {
+        if (_mode)
+        {
+            int i = 0;
+            foreach (var renderer in _transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.material = doorMaterials[i]; // I don't know why, but after generating a new seed, the doors to the eternal rooms don't update as expected.
+                i++;
+            }
+        }
+        foreach (var door in _transform.GetComponentsInChildren<Door>())
+        {
+            door.transform.GetComponent<Collider>().enabled = _mode;
+        }
+    }
+
+    private void CacheDoorMaterials()
+    {
+        doorMaterials.Clear();
+        GameObject prefabInstance = Instantiate(doorPrefab, transform);
+        foreach (var renderer in prefabInstance.GetComponentsInChildren<MeshRenderer>())
+        {
+            doorMaterials.Add(renderer.material);
+        }
+        Destroy(prefabInstance);
     }
 
     private void OnDrawGizmosSelected()
@@ -172,7 +174,7 @@ public class RoomEntity : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {
+    {/*
         if (Application.isPlaying) { return; }
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
@@ -195,7 +197,7 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }
+        }*/
     }
 
 }

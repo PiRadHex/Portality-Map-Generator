@@ -158,8 +158,9 @@ MonoBehaviour:
     isEmpty: 1
   - transform: {fileID: 5308558035049255112}
     isEmpty: 1
+  defaultDoorTexture: {fileID: 2800000, guid: e63b16a378331174ab5f35b8e5ae0f4a, type: 3}
   doorPrefab: {fileID: 7276432321377762978, guid: 2eb4e4e5fb2c5fc4eaae614c343d8f7c, type: 3}
-  colors: []
+  setRandomColor: 1
 --- !u!1 &5318214834796829457
 GameObject:
   m_ObjectHideFlags: 0
