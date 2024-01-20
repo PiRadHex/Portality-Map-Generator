@@ -47,16 +47,16 @@ public class DistributePortals : MonoBehaviour
         {
             portalPairs[i + baseIndex].portal1.position = pair1[i].position;
             portalPairs[i + baseIndex].portal1.rotation = pair1[i].rotation;
-            InstantiateDoor(pair1[i], portalPairs[i + baseIndex].portal1.transform);
+            //InstantiateDoor(pair1[i], portalPairs[i + baseIndex].portal1.transform);
 
             portalPairs[i + baseIndex].portal2.position = pair2[i].position;
             portalPairs[i + baseIndex].portal2.rotation = pair2[i].rotation;
-            InstantiateDoor(pair2[i], portalPairs[i + baseIndex].portal2.transform);
+            //InstantiateDoor(pair2[i], portalPairs[i + baseIndex].portal2.transform);
 
             portalPairs[i + baseIndex].portal2.Rotate(0, 180, 0);
 
             portalPairs[i + baseIndex].isUsed = true;
-            Physics.SyncTransforms();
+
             portalPairs[i + baseIndex].portal1.parent.gameObject.SetActive(true);
             
         }

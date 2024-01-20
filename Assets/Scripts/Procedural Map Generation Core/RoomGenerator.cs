@@ -39,10 +39,10 @@ public class RoomGenerator : MonoBehaviour
         PlaceRooms();
         GenerateTree();
         PlacePortals();
-
+        SetRoomsNumber();
     }
 
-    void PlaceRooms()
+    private void PlaceRooms()
     {
         for (int i = 0; i < numOfRandomRooms; i++)
         {
@@ -60,7 +60,7 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
-    void DestroyInstances()
+    private void DestroyInstances()
     {
         foreach (var room in roomEntities)
         {
@@ -74,6 +74,16 @@ public class RoomGenerator : MonoBehaviour
 
         roomEntities.Clear();
         prefabInstances.Clear();
+    }
+
+    private void SetRoomsNumber()
+    {
+        int num = 0;
+        foreach(var room in roomEntities)
+        {
+            room.SetRoomNumber(num);
+            num++;
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -94,12 +104,12 @@ public class RoomGenerator : MonoBehaviour
         }*/
     }
 
-    public void SetNumOfRandomRooms()
+    private void SetNumOfRandomRooms()
     {
         numOfRandomRooms = UnityEngine.Random.Range(minRooms, maxRooms);
     }
 
-    public void AddEternalRooms()
+    private void AddEternalRooms()
     {
         foreach (var e in eternalRooms)
         {
@@ -107,8 +117,7 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
-    
-    public void PlacePortals()
+    private void PlacePortals()
     {
         int pairIndex = 0;
         int totalPairs = EternalPortals.transform.childCount;
@@ -152,7 +161,7 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
-    public void SetAllUnused()
+    private void SetAllUnused()
     {
         for (int i = 0; i < EternalPortals.transform.childCount; i++)
         {
@@ -167,7 +176,7 @@ public class RoomGenerator : MonoBehaviour
     }
 
 
-    void GenerateTree()
+    private void GenerateTree()
     {
         paths.Clear();
         int[] numOfUsedCandidates = new int[roomEntities.Count];

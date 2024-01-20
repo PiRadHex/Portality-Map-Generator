@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using PiRadHex.CustomGizmos;
 using PiRadHex.Shuffle;
+using TMPro;
 
 public class RoomEntity : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class RoomEntity : MonoBehaviour
 
     [SerializeField] GameObject doorPrefab;
     public bool setRandomColor = true;
+    [SerializeField] List<TextMeshPro> textNumbers = new List<TextMeshPro>(); 
     private List<GameObject> doorInstances = new List<GameObject>();
     private List<Material> doorMaterials = new List<Material>();
 
@@ -80,6 +82,14 @@ public class RoomEntity : MonoBehaviour
         return portalCandidates.Count;
     }
 
+    public void SetRoomNumber(int num)
+    {
+        foreach (var textMesh in textNumbers)
+        {
+            textMesh.text = num.ToString();
+        }
+    }
+
     private void SetColor()
     {
         Material material = new Material(Shader.Find("Standard"));
@@ -88,7 +98,7 @@ public class RoomEntity : MonoBehaviour
         {
             foreach (var renderer in GetComponentsInChildren<MeshRenderer>())
             {
-                renderer.material = material;
+                if (renderer.GetComponent<TextMeshPro>() == null) renderer.material = material;
             }
         }
         
@@ -174,7 +184,7 @@ public class RoomEntity : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {/*
+    {
         if (Application.isPlaying) { return; }
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
@@ -197,7 +207,7 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }*/
+        }
     }
 
 }
