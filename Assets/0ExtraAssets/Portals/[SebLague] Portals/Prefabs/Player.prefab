@@ -283,6 +283,8 @@ MonoBehaviour:
   gravityMultiplier: 1.7
   inAirSpeedMultiplier: 0.5
   smoothMoveTime: 0.15
+  lookJoystick: {fileID: 0}
+  moveJoystick: {fileID: 0}
   maxStamina: 100
   currentStamina: 100
   staminaRecoveryRate: 50
@@ -568,7 +570,7 @@ MonoBehaviour:
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 5
-    NearClipPlane: 0.05
+    NearClipPlane: 0.07
     FarClipPlane: 50
     Dutch: 0
     ModeOverride: 0

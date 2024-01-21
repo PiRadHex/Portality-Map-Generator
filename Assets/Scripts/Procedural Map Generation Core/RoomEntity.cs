@@ -137,6 +137,7 @@ public class RoomEntity : MonoBehaviour
             foreach (var renderer in _transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
             {
                 renderer.material = doorMaterials[i]; // I don't know why, but after generating a new seed, the doors to the eternal rooms don't update as expected.
+                //if(_transform.parent.name == "Room [A]") Debug.Log(renderer.material + ":::::" + doorMaterials[i]);
                 i++;
             }
         }
@@ -184,7 +185,7 @@ public class RoomEntity : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {
+    {/*
         if (Application.isPlaying) { return; }
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 50f) { return; }
@@ -207,7 +208,7 @@ public class RoomEntity : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(candidate.transform.position, 0.1f);
             }
-        }
+        }*/
     }
 
 }

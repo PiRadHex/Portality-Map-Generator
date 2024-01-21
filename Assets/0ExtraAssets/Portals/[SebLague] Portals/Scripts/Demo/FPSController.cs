@@ -17,6 +17,8 @@ public class FPSController : PortalTraveller
     public float gravityMultiplier = 1.7f;
     public float inAirSpeedMultiplier = 0.5f;
     public float smoothMoveTime = 0.1f;
+    [SerializeField] Joystick lookJoystick;
+    [SerializeField] Joystick moveJoystick;
 
     [Header(".:: STAMINA ::.")]
     public float maxStamina = 100f;
@@ -60,7 +62,7 @@ public class FPSController : PortalTraveller
 
     private void Start()
     {
-        if (lockCursor)
+        if (lockCursor && Application.platform != RuntimePlatform.Android)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -78,8 +80,13 @@ public class FPSController : PortalTraveller
     private void HandleMovement()
     {
         // Mouse Look
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = -Input.GetAxis("Mouse Y") * mouseSensitivity;
+        float mouseX = (Input.GetAxis("Mouse X") + lookJoystick.Horizontal * 2) * mouseSensitivity;
+        float mouseY = -(Input.GetAxis("Mouse Y") + lookJoystick.Vertical) * mouseSensitivity;
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            mouseX = lookJoystick.Horizontal * 5 * mouseSensitivity;
+            mouseY = -lookJoystick.Vertical * mouseSensitivity;
+        }
 
         verticalRotation += mouseY;
         verticalRotation = Mathf.Clamp(verticalRotation, -89, 89);
@@ -89,7 +96,7 @@ public class FPSController : PortalTraveller
 
 
         // Movement
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal") + moveJoystick.Horizontal, Input.GetAxisRaw("Vertical") + moveJoystick.Vertical);
 
         Vector3 inputDir = new Vector3(input.x, 0, input.y).normalized;
         Vector3 worldInputDir = transform.TransformDirection(inputDir) * (isGrounded ? 1f : inAirSpeedMultiplier);
