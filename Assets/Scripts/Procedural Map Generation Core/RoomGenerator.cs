@@ -86,8 +86,9 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
-    {/*
+    {
         var sceneCamera = SceneView.currentDrawingSceneView == null ? Camera.main : SceneView.currentDrawingSceneView.camera;
         if (Vector3.Distance(sceneCamera.transform.position, transform.position) > 100)
         {
@@ -101,8 +102,9 @@ public class RoomGenerator : MonoBehaviour
 
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(startPosition.position, 0.1f);
-        }*/
+        }
     }
+#endif
 
     public void SetMinMaxRooms(float min, float max)
     {
