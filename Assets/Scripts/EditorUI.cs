@@ -1,5 +1,6 @@
 using Cinemachine;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -22,6 +23,10 @@ public class EditorUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI portalsTextMesh;
     [SerializeField] string portalsText = "Portals: ";
 
+    [Header("Path Info")]
+    [SerializeField] GameObject pathPanel;
+    [SerializeField] TextMeshProUGUI pathTextMesh;
+
     [Header("Touch Screen")]
     [SerializeField] List<GameObject> joysticks = new List<GameObject>();
 
@@ -35,6 +40,7 @@ public class EditorUI : MonoBehaviour
         editorPanel.SetActive(false);
         VCam.enabled = false;
         roomGenerator = FindObjectOfType<RoomGenerator>();
+        ClosePathPanel();
     }
 
     public void RefreshUI()
@@ -46,7 +52,27 @@ public class EditorUI : MonoBehaviour
 
         portalPairsTextMesh.text = portalPairsText + roomGenerator.GetUsedPortalPairsCount().ToString();
         portalsTextMesh.text = portalsText + (roomGenerator.GetUsedPortalPairsCount() * 2).ToString();
-        
+
+        PrintPaths();
+    }
+
+    private void PrintPaths()
+    {
+        string pathString = "Paths Info:\n\n";
+        int pathIndex = 0;
+        foreach (var path in roomGenerator.paths)
+        {
+            pathString += "path[" + pathIndex + "] = {";
+            int[] sequence = path.GetSequence();
+            sequence.Reverse();
+            for (int i = 0; i + 1 < sequence.Length; i++)
+            {
+                pathString += sequence[i] + "}, {";
+            }
+            pathString += sequence.Last() + "}\n\n";
+            pathIndex++;
+        }
+        pathTextMesh.text = pathString;
     }
 
     public void UpdateUI()
@@ -68,6 +94,7 @@ public class EditorUI : MonoBehaviour
     public void ToggleEditMode()
     {
         RefreshUI();
+        ClosePathPanel();
         editorPanel.SetActive(!editorPanel.activeInHierarchy);
         VCam.enabled = editorPanel.activeInHierarchy;
         if (Application.platform != RuntimePlatform.Android)
@@ -85,6 +112,16 @@ public class EditorUI : MonoBehaviour
     {
         isTouchControl = !isTouchControl;
         Cursor.lockState = isTouchControl ? CursorLockMode.None : (editorPanel.activeInHierarchy ? CursorLockMode.None : CursorLockMode.Locked);
+    }
+
+    public void ShowPathPanel()
+    {
+        pathPanel.SetActive(true);
+    }
+
+    public void ClosePathPanel()
+    {
+        pathPanel.SetActive(false);
     }
 
 }
