@@ -104,6 +104,12 @@ public class RoomGenerator : MonoBehaviour
         }*/
     }
 
+    public void SetMinMaxRooms(float min, float max)
+    {
+        minRooms = (int)min;
+        maxRooms = (int)max;
+    }
+
     private void SetNumOfRandomRooms()
     {
         numOfRandomRooms = UnityEngine.Random.Range(minRooms, maxRooms);
