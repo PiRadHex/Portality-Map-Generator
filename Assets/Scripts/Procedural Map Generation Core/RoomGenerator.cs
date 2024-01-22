@@ -110,6 +110,33 @@ public class RoomGenerator : MonoBehaviour
         maxRooms = (int)max;
     }
 
+    public int GetNumOfEternalRooms()
+    {
+        return eternalRooms.Count;
+    }
+
+    public int GetNumOfRandomRooms()
+    {
+        return numOfRandomRooms;
+    }
+
+    public int GetUsedPortalPairsCount()
+    {
+        int count = 0;
+        for (int i = 0; i < EternalPortals.transform.childCount; i++)
+        {
+            if (EternalPortals.transform.GetChild(i).gameObject.activeInHierarchy)
+            {
+                count++;
+            }
+            else
+            {
+                return count;
+            }
+        }
+        return count;
+    }
+
     private void SetNumOfRandomRooms()
     {
         numOfRandomRooms = UnityEngine.Random.Range(minRooms, maxRooms);

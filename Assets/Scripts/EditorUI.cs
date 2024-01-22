@@ -5,30 +5,55 @@ using UnityEngine;
 
 public class EditorUI : MonoBehaviour
 {
+    [Header("General")]
     [SerializeField] TMP_InputField seedInput;
     [SerializeField] GameObject editorPanel;
     [SerializeField] CinemachineVirtualCamera VCam;
+
+    [Header("Info")]
+    [SerializeField] TextMeshProUGUI eteranlRoomsTextMesh;
+    [SerializeField] string eteranlRoomsText = "Eternal Rooms: ";
+    [SerializeField] TextMeshProUGUI randomRoomsTextMesh;
+    [SerializeField] string randomRoomsText = "Random Rooms: ";
+    [SerializeField] TextMeshProUGUI totalRoomsTextMesh;
+    [SerializeField] string totalRoomsText = "Total: ";
+    [SerializeField] TextMeshProUGUI portalPairsTextMesh;
+    [SerializeField] string portalPairsText = "Portal Pairs: ";
+    [SerializeField] TextMeshProUGUI portalsTextMesh;
+    [SerializeField] string portalsText = "Portals: ";
+
+    [Header("Touch Screen")]
     [SerializeField] List<GameObject> joysticks = new List<GameObject>();
 
     public bool isTouchControl = false;
+
+    private RoomGenerator roomGenerator;
 
     private void Start()
     {
         seedInput.text = SeedGenerator.Instance.GetSeed().ToString();
         editorPanel.SetActive(false);
         VCam.enabled = false;
+        roomGenerator = FindObjectOfType<RoomGenerator>();
     }
 
     public void RefreshUI()
     {
         seedInput.text = SeedGenerator.Instance.GetSeed().ToString();
+        eteranlRoomsTextMesh.text = eteranlRoomsText + roomGenerator.GetNumOfEternalRooms().ToString();
+        randomRoomsTextMesh.text = randomRoomsText + roomGenerator.GetNumOfRandomRooms().ToString();
+        totalRoomsTextMesh.text = totalRoomsText + (roomGenerator.GetNumOfEternalRooms() + roomGenerator.GetNumOfRandomRooms()).ToString();
+
+        portalPairsTextMesh.text = portalPairsText + roomGenerator.GetUsedPortalPairsCount().ToString();
+        portalsTextMesh.text = portalsText + (roomGenerator.GetUsedPortalPairsCount() * 2).ToString();
+        
     }
 
     public void UpdateUI()
     {
         int.TryParse(seedInput.text, out int seed);
         if (seedInput.text != "Enter Seed...") { SeedGenerator.Instance.SetCustomSeed(seed); }
-        seedInput.text = SeedGenerator.Instance.GetSeed().ToString();
+        RefreshUI();
     }
 
     private void Update()
@@ -42,6 +67,7 @@ public class EditorUI : MonoBehaviour
 
     public void ToggleEditMode()
     {
+        RefreshUI();
         editorPanel.SetActive(!editorPanel.activeInHierarchy);
         VCam.enabled = editorPanel.activeInHierarchy;
         if (Application.platform != RuntimePlatform.Android)
