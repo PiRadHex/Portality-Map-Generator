@@ -77,8 +77,8 @@ public class EditorUI : MonoBehaviour
 
     public void UpdateUI()
     {
-        int.TryParse(seedInput.text, out int seed);
-        if (seedInput.text != "Enter Seed...") { SeedGenerator.Instance.SetCustomSeed(seed); }
+        //int.TryParse(seedInput.text, out int seed);
+        if (seedInput.text != "Enter Seed...") { SeedGenerator.Instance.SetCustomSeed(seedInput.text); }
         RefreshUI();
     }
 
