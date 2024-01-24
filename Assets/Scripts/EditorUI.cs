@@ -58,7 +58,7 @@ public class EditorUI : MonoBehaviour
 
     private void PrintPaths()
     {
-        string pathString = "Paths Info:\n\n";
+        string pathString = "";
         int pathIndex = 0;
         foreach (var path in roomGenerator.paths)
         {
