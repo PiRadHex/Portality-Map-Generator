@@ -15,9 +15,10 @@ A toolkit made in Unity that generates random levels using procedural algorithms
 ## Usage
 To generate a random level:
 1. Open the demo scene in Unity.
-2. Set the desired seed value in the UI.
-3. Click the "Generate" button.
-4. The generated paths will be displayed in the scene.
+2. Open  The UI by Pressing "E" button
+3. Set the desired seed value in the UI.
+4. Click the "Generate" button.
+5. The generated paths will be displayed in the UI.
 
 ## Contributing
 We welcome contributions to improve and expand this project. Please follow these steps:
