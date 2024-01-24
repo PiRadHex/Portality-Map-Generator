@@ -16,16 +16,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3743597651360454368, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3743597651360454368, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: m_BackGroundColor.b
-      value: 0.54901963
+      value: 0.56078434
       objectReference: {fileID: 0}
     - target: {fileID: 3743597651360454368, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: m_BackGroundColor.g
-      value: 0.4509804
+      value: 0.50980395
       objectReference: {fileID: 0}
     - target: {fileID: 3743597651360454368, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: m_BackGroundColor.r
-      value: 0.22745098
+      value: 0.21176471
       objectReference: {fileID: 0}
     - target: {fileID: 3743597651360454370, guid: ce71ddc64223549ed8fc19f77f5948b2, type: 3}
       propertyPath: m_StaticEditorFlags

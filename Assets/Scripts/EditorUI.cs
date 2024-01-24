@@ -1,7 +1,9 @@
 using Cinemachine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EditorUI : MonoBehaviour
@@ -26,6 +28,7 @@ public class EditorUI : MonoBehaviour
     [Header("Path Info")]
     [SerializeField] GameObject pathPanel;
     [SerializeField] TextMeshProUGUI pathTextMesh;
+    [SerializeField] TextMeshProUGUI connectionTextMesh;
 
     [Header("Touch Screen")]
     [SerializeField] List<GameObject> joysticks = new List<GameObject>();
@@ -54,6 +57,7 @@ public class EditorUI : MonoBehaviour
         portalsTextMesh.text = portalsText + (roomGenerator.GetUsedPortalPairsCount() * 2).ToString();
 
         PrintPaths();
+        PrintConnections();
     }
 
     private void PrintPaths()
@@ -73,6 +77,43 @@ public class EditorUI : MonoBehaviour
             pathIndex++;
         }
         pathTextMesh.text = pathString;
+    }
+
+    private void PrintConnections()
+    {
+        Dictionary<int, List<int>> adjacentRooms = new Dictionary<int, List<int>>();
+
+        // Initialize adjacentRooms for the range of room indices
+        int totalRooms = roomGenerator.GetNumOfEternalRooms() + roomGenerator.GetNumOfRandomRooms();
+        for (int i = 0; i < totalRooms; i++)
+        {
+            adjacentRooms[i] = new List<int>();
+        }
+
+        // Build the adjacency list
+        foreach (var path in roomGenerator.paths)
+        {
+            int[] sequence = path.GetSequence();
+            for (int i = 0; i < sequence.Length - 1; i++)
+            {
+                if (!adjacentRooms[sequence[i + 1]].Contains(sequence[i]))
+                {
+                    adjacentRooms[sequence[i]].Add(sequence[i + 1]);
+                    adjacentRooms[sequence[i + 1]].Add(sequence[i]);
+                }
+            }
+        }
+
+        // Convert the adjacency list to a string
+        StringBuilder result = new StringBuilder();
+        foreach (var room in adjacentRooms)
+        {
+            result.Append($"room[{room.Key}]: ");
+            result.AppendJoin(", ", room.Value.Select(adjacentRoom => $"{{{adjacentRoom}}}"));
+            result.AppendLine("\n");
+        }
+
+        connectionTextMesh.text = result.ToString();
     }
 
     public void UpdateUI()
