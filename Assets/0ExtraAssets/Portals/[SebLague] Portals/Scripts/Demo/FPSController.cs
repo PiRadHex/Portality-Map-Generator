@@ -84,7 +84,7 @@ public class FPSController : PortalTraveller
         float mouseY = -(Input.GetAxis("Mouse Y") + lookJoystick.Vertical) * mouseSensitivity;
         if (Application.platform == RuntimePlatform.Android)
         {
-            mouseX = lookJoystick.Horizontal * 5 * mouseSensitivity;
+            mouseX = lookJoystick.Horizontal * 4 * mouseSensitivity;
             mouseY = -lookJoystick.Vertical * mouseSensitivity;
         }
 

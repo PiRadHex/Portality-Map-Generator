@@ -145,6 +145,7 @@ public class RoomEntity : MonoBehaviour
         {
             door.transform.GetComponent<Collider>().enabled = _mode;
         }
+        _transform.GetChild(0).GetComponent<Animator>().enabled = _mode;
     }
 
     private void CacheDoorMaterials()

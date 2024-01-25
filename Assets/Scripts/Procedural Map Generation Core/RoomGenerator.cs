@@ -28,6 +28,7 @@ public class RoomGenerator : MonoBehaviour
     {
         EternalPortals.transform.position = new Vector3(8888, 8888, 8888);
         GenerateProceduralPortalityMap();
+        if (Application.platform == RuntimePlatform.Android) Application.targetFrameRate = 60;
     }
 
     public void GenerateProceduralPortalityMap()
