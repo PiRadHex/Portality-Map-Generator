@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EditorUI : MonoBehaviour
 {
@@ -29,6 +29,8 @@ public class EditorUI : MonoBehaviour
     [SerializeField] GameObject pathPanel;
     [SerializeField] TextMeshProUGUI pathTextMesh;
     [SerializeField] TextMeshProUGUI connectionTextMesh;
+    [SerializeField] ScrollRect pathScrollRect;
+    [SerializeField] ScrollRect connectionScrollRect;
 
     [Header("Touch Screen")]
     [SerializeField] List<GameObject> joysticks = new List<GameObject>();
@@ -62,7 +64,7 @@ public class EditorUI : MonoBehaviour
 
     private void PrintPaths()
     {
-        string pathString = "";
+        string pathString = "\n";
         int pathIndex = 0;
         foreach (var path in roomGenerator.paths)
         {
@@ -113,7 +115,7 @@ public class EditorUI : MonoBehaviour
             result.AppendLine("\n");
         }
 
-        connectionTextMesh.text = result.ToString();
+        connectionTextMesh.text = "\n" + result.ToString();
     }
 
     public void UpdateUI()
@@ -121,6 +123,10 @@ public class EditorUI : MonoBehaviour
         //int.TryParse(seedInput.text, out int seed);
         if (seedInput.text != "Enter Seed...") { SeedGenerator.Instance.SetCustomSeed(seedInput.text); }
         RefreshUI();
+
+        Canvas.ForceUpdateCanvases();
+        pathScrollRect.verticalNormalizedPosition = 1f;
+        connectionScrollRect.verticalNormalizedPosition = 1f;
     }
 
     private void Update()
@@ -147,6 +153,9 @@ public class EditorUI : MonoBehaviour
         {
             joystick.SetActive(!editorPanel.activeInHierarchy);
         }
+        Canvas.ForceUpdateCanvases();
+        pathScrollRect.verticalNormalizedPosition = 1f;
+        connectionScrollRect.verticalNormalizedPosition = 1f;
     }
 
     public void ToggleTouchControl()
