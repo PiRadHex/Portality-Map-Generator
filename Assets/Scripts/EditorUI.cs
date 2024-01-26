@@ -39,6 +39,8 @@ public class EditorUI : MonoBehaviour
 
     private RoomGenerator roomGenerator;
 
+    private bool isEditMode = false;
+
     private void Start()
     {
         seedInput.text = SeedGenerator.Instance.GetSeed().ToString();
@@ -141,18 +143,36 @@ public class EditorUI : MonoBehaviour
     public void ToggleEditMode()
     {
         RefreshUI();
-        ClosePathPanel();
-        editorPanel.SetActive(!editorPanel.activeInHierarchy);
-        VCam.enabled = editorPanel.activeInHierarchy;
+        isEditMode = !isEditMode;
+
+        if (isEditMode)
+        {
+            pathPanel.SetActive(false);
+            editorPanel.SetActive(false);
+            editorPanel.SetActive(true);
+        }
+        else
+        {
+            if (editorPanel.TryGetComponent<Animator>(out Animator editorPanelAnimator))
+            {
+                editorPanelAnimator.SetTrigger("Exit");
+            }
+            else { editorPanel.SetActive(false); }
+        }
+
+        VCam.enabled = isEditMode;
+
         if (Application.platform != RuntimePlatform.Android)
         {
-            Cursor.visible = editorPanel.activeInHierarchy;
-            if (!isTouchControl) Cursor.lockState = editorPanel.activeInHierarchy ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = isEditMode;
+            if (!isTouchControl) Cursor.lockState = isEditMode ? CursorLockMode.None : CursorLockMode.Locked;
         }
+
         foreach(var joystick in joysticks)
         {
-            joystick.SetActive(!editorPanel.activeInHierarchy);
+            joystick.SetActive(!isEditMode);
         }
+
         Canvas.ForceUpdateCanvases();
         pathScrollRect.verticalNormalizedPosition = 1f;
         connectionScrollRect.verticalNormalizedPosition = 1f;
@@ -161,17 +181,22 @@ public class EditorUI : MonoBehaviour
     public void ToggleTouchControl()
     {
         isTouchControl = !isTouchControl;
-        Cursor.lockState = isTouchControl ? CursorLockMode.None : (editorPanel.activeInHierarchy ? CursorLockMode.None : CursorLockMode.Locked);
+        Cursor.lockState = isTouchControl ? CursorLockMode.None : (isEditMode ? CursorLockMode.None : CursorLockMode.Locked);
     }
 
     public void ShowPathPanel()
     {
+        pathPanel.SetActive(false);
         pathPanel.SetActive(true);
     }
 
     public void ClosePathPanel()
     {
-        pathPanel.SetActive(false);
+        if (pathPanel.TryGetComponent<Animator>(out Animator editorPanelAnimator))
+        {
+            editorPanelAnimator.SetTrigger("Exit");
+        }
+        else { pathPanel.SetActive(false); }
     }
 
 }
