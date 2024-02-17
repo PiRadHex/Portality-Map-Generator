@@ -20,9 +20,9 @@ https://github.com/PiRadHex/Portality-Map-Generator/assets/124064917/151d3259-70
 https://github.com/PiRadHex/Portality-Map-Generator/assets/124064917/d5680323-8182-4e87-94a4-66c91da0c901
 
 ## How to Experience
-- **Demo**: Download the demo for [PC]() and [Android]() or test it on [WebGL]().
+- **Demo**: Download the demo for [PC](https://github.com/PiRadHex/Portality-Map-Generator/releases/download/Latest/PortalityMapGenerator_Windows_v0.1.01.zip) and [Android](https://github.com/PiRadHex/Portality-Map-Generator/releases/download/Latest/Portality_v0.1.01.apk) or test it on [WebGL](https://piradhex.itch.io/portality-map-generator).
 - **Unity**: Clone the repository and open it in Unity.
-- **Unity Package**: Download the [package]() and import it into Unity.
+- **Unity Package**: Download the [package](https://github.com/PiRadHex/Portality-Map-Generator/releases/download/Latest/PortalityMapGenerator_v0.1.0.unitypackage) and import it into Unity.
 
 ### Demo Scene
 1. Enter/Exit edit mode by pressing "E" (or tap on the setting icon for touch screen devices).
